@@ -25,7 +25,7 @@ def login():
     else:
         return jsonify({'message': 'Invalid credentials'}), 401
     
-    # User CRUD Operations at least for one resource(User)
+    # CRUD Operations at least for one resource(User)
 
 @app.route('/users', methods=['POST'])
 def create_user():
