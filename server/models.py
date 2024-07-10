@@ -4,6 +4,7 @@ from datetime import date
 
 db = SQLAlchemy()
 
+
 # Association table for the many-to-many relationship
 user_groups = db.Table('user_groups',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
