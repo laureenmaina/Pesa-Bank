@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, request
-from models import db, User, Transaction
+from models import db, User, Transaction, Subscription
+from datetime import datetime
 
 
 app = Flask(__name__)
@@ -69,6 +70,70 @@ def delete_user(user_id):
         return jsonify({'message': 'User deleted successfully'})
     else:
         return jsonify({'message': 'User not found'}), 404   
+    
+
+# Subscription CRUD Operations
+
+@app.route('/subscriptions', methods=['POST'])
+def create_subscription():
+    data = request.get_json()
+    new_subscription = Subscription(
+        user_id=data['user_id'],
+        name=data['name'],
+        amount=data['amount'],
+        date_subscribed=datetime.strptime(data['date_subscribed'], '%Y-%m-%d')
+    )
+    db.session.add(new_subscription)
+    db.session.commit()
+    return jsonify({'message': 'Subscription created successfully'}), 201
+
+@app.route('/subscriptions', methods=['GET'])
+def get_subscriptions():
+    subscriptions = Subscription.query.all()
+    return jsonify([{
+        'id': sub.id,
+        'user_id': sub.user_id,
+        'name': sub.name,
+        'amount': sub.amount,
+        'date_subscribed': sub.date_subscribed.strftime('%Y-%m-%d')
+    } for sub in subscriptions])
+
+@app.route('/subscriptions/<int:sub_id>', methods=['GET'])
+def get_subscription(sub_id):
+    subscription = Subscription.query.get(sub_id)
+    if subscription:
+        return jsonify({
+            'id': subscription.id,
+            'user_id': subscription.user_id,
+            'name': subscription.name,
+            'amount': subscription.amount,
+            'date_subscribed': subscription.date_subscribed.strftime('%Y-%m-%d')
+        })
+    else:
+        return jsonify({'message': 'Subscription not found'}), 404
+
+@app.route('/subscriptions/<int:sub_id>', methods=['PUT'])
+def update_subscription(sub_id):
+    data = request.get_json()
+    subscription = Subscription.query.get(sub_id)
+    if subscription:
+        subscription.name = data['name']
+        subscription.amount = data['amount']
+        subscription.date_subscribed = datetime.strptime(data['date_subscribed'], '%Y-%m-%d')
+        db.session.commit()
+        return jsonify({'message': 'Subscription updated successfully'})
+    else:
+        return jsonify({'message': 'Subscription not found'}), 404
+
+@app.route('/subscriptions/<int:sub_id>', methods=['DELETE'])
+def delete_subscription(sub_id):
+    subscription = Subscription.query.get(sub_id)
+    if subscription:
+        db.session.delete(subscription)
+        db.session.commit()
+        return jsonify({'message': 'Subscription deleted successfully'})
+    else:
+        return jsonify({'message': 'Subscription not found'}), 404
 
 # Define create and read operations for Transaction.
 
