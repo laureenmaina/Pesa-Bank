@@ -22,7 +22,7 @@ class User(db.Model, SerializerMixin):
     savings = db.relationship("Saving", back_populates="user")
     loans = db.relationship("Loan", back_populates="user")
     subscriptions = db.relationship("Subscription", back_populates="user")
-    groups = db.relationship('Group', secondary=user_groups, back_populates='users')  # many-to-many relationship
+    groups = db.relationship('Group', secondary=user_groups, back_populates='users') 
 
 class Account(db.Model, SerializerMixin):
     __tablename__ = 'accounts'
