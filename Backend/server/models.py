@@ -1,5 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
+from sqlalchemy.orm import validates
 from datetime import date
 
 db = SQLAlchemy()
@@ -50,15 +51,28 @@ class Saving(db.Model, SerializerMixin):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship("User", back_populates="savings")
 
+    @validates('target_date')
+    def validate_target_date(self, key, value):
+        if value < date.today():
+            raise ValueError("The target date cannot be in the past.")
+        return value
+
 class Loan(db.Model, SerializerMixin):
     __tablename__ = 'loans'
     id = db.Column(db.Integer, primary_key=True)
     borrowed_amount = db.Column(db.Float, nullable=False)
+    borrow_date = db.Column(db.Date, nullable=False)
     target_date = db.Column(db.Date, nullable=False)
     trustee = db.Column(db.String, nullable=False)
     trustee_phone_number = db.Column(db.Integer, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship("User", back_populates="loans")
+
+    @validates('borrow_date', 'target_date')
+    def validate_dates(self, key, value):
+        if value < date.today():
+            raise ValueError(f"The {key} cannot be in the past.")
+        return value
 
 class Subscription(db.Model, SerializerMixin):
     __tablename__ = 'subscriptions'
