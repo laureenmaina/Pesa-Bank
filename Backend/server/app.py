@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from models import db, User, Transaction, Subscription
 from datetime import datetime
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager, create_access_token, get_jwt_identity, jwt_required,  get_jwt
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required,  get_jwt
 from flask_cors import CORS
 import random
 from datetime import timedelta 
@@ -11,12 +11,12 @@ from datetime import timedelta
 app = Flask(__name__)
 CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pesabank.db'
-app.config["JWT_SECRET_KEY"] = "fsbdgfnhgvjnvhmvh"+str(random.randint(1,1000000000000)) #Randomly generated secret keys for JWT and session management.
+app.config["JWT_SECRET_KEY"] = "fsbdgfnhgvjnvhmvh"+str(random.randint(1,1000000000000))
 app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
 app.config["SECRET_KEY"] = "JKSRVHJVFBSRDFV"+str(random.randint(1,1000000000000))
 
-bcrypt = Bcrypt(app) # for password hashing.
-jwt = JWTManager(app)#instance for handling JWT.
+bcrypt = Bcrypt(app) 
+jwt = JWTManager(app)
 db.init_app(app)
 
 with app.app_context():
