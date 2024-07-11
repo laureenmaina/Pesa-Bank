@@ -1,37 +1,78 @@
 from flask import Flask, jsonify, request
 from models import db, User, Transaction, Subscription
 from datetime import datetime
+from flask_bcrypt import Bcrypt
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required,  get_jwt
+from flask_cors import CORS
+import random
+from datetime import timedelta 
 
 
 app = Flask(__name__)
+CORS(app)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pesabank.db'
+app.config["JWT_SECRET_KEY"] = "fsbdgfnhgvjnvhmvh"+str(random.randint(1,1000000000000))
+app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
+app.config["SECRET_KEY"] = "JKSRVHJVFBSRDFV"+str(random.randint(1,1000000000000))
+
+bcrypt = Bcrypt(app) 
+jwt = JWTManager(app)
 db.init_app(app)
+
+with app.app_context():
+    db.create_all() 
 
 
  # Define routes for signup and login.
 @app.route('/signup', methods=['POST'])
 def signup():
     data = request.get_json()
-    new_user = User(username=data['username'], password=data['password'])
+    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    new_user = User(username=data['username'], password=hashed_password)
     db.session.add(new_user)
     db.session.commit()
     return jsonify({'message': 'User created successfully'}), 201
 
+    
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
-    user = User.query.filter_by(username=data['username']).first()
-    if user and user.password == data['password']:
-        return jsonify({'message': 'Login successful'}), 200
+    username = data.get("username")
+    password = data.get("password")
+
+    if not username or not password:
+        return jsonify({"message": "Username and password are required"}), 400
+
+    user = User.query.filter_by(username=username).first()
+
+    if user and bcrypt.check_password_hash(user.password, password): 
+        access_token = create_access_token(identity=user.id) 
+        return jsonify({"access_token": access_token})
+
     else:
-        return jsonify({'message': 'Invalid credentials'}), 401
-    
+        return jsonify({"message": "Invalid username or password"}), 401
+
+
+# Logout
+BLACKLIST = set() 
+@jwt.token_in_blocklist_loader
+def check_if_token_in_blocklist(jwt_header, decrypted_token):
+    return decrypted_token['jti'] in BLACKLIST
+
+@app.route("/logout", methods=["POST"])
+@jwt_required()
+def logout():
+    jti = get_jwt()["jti"] 
+    BLACKLIST.add(jti)
+    return jsonify({"success":"Successfully logged out"}), 200
+
+
     # CRUD Operations at least for one resource(User)
 
 @app.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()
-    new_user = User(username=data['username'], password=data['password'])
+    new_user = User(username=data['username'],email=data['email'], password=bcrypt.generate_password_hash( data['password'] ).decode("utf-8")) 
     db.session.add(new_user)
     db.session.commit()
     return jsonify({'message': 'User created successfully'}), 201
@@ -39,13 +80,14 @@ def create_user():
 @app.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
-    return jsonify([{'id': user.id, 'username': user.username} for user in users])
+    return jsonify([{'id': user.id, 'username': user.username,'email':user.email} for user in users])
+
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     user = User.query.get(user_id)
     if user:
-        return jsonify({'id': user.id, 'username': user.username})
+        return jsonify({'id': user.id, 'username': user.username, 'email':user.email})
     else:
         return jsonify({'message': 'User not found'}), 404
 
@@ -55,7 +97,8 @@ def update_user(user_id):
     user = User.query.get(user_id)
     if user:
         user.username = data['username']
-        user.password = data['password']
+        user.email = data['email']
+        user.password = bcrypt.generate_password_hash(data['password']).decode("utf-8")
         db.session.commit()
         return jsonify({'message': 'User updated successfully'})
     else:
@@ -154,6 +197,7 @@ def get_transactions():
         'amount': tx.amount,
         'type': tx.type
     } for tx in transactions])
+
 
 
 if __name__ == '__main__':
