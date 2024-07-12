@@ -1,9 +1,16 @@
 #!/usr/bin/env python3
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 
 from flask import request, session, jsonify
 from flask_restful import Resource
 from config import app, db, api
 from models import User
+
+db = SQLAlchemy()
+def init_app(app):
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///yourdatabase.db'
+    db.init_app(app)
 
 class ClearSession(Resource):
     def delete(self):

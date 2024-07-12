@@ -1,37 +1,39 @@
+from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
 from flask import  jsonify, request, session
 from models import db, User, Transaction, Subscription, TransactionType
+from werkzeug.security import generate_password_hash
 from datetime import datetime
-from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required,  get_jwt
-from flask_cors import CORS
-import random
-from datetime import timedelta 
+from flask_bcrypt import bcrypt
+from flask_restful import Resource
+from config import app, db, api
 
 
-app = Flask(__name__)
-CORS(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pesabank.db'
-app.config["JWT_SECRET_KEY"] = "fsbdgfnhgvjnvhmvh"+str(random.randint(1,1000000000000))
-app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(days=1)
-app.config["SECRET_KEY"] = "JKSRVHJVFBSRDFV"+str(random.randint(1,1000000000000))
+class ClearSession(Resource):
+    def delete(self):
+        session.clear()
+        return {}, 204
 
-bcrypt = Bcrypt(app) 
-jwt = JWTManager(app)
-db.init_app(app)
+class Signup(Resource):
+    def post(self):
+        json_data = request.get_json()
+        username = json_data.get('username')
+        password = json_data.get('password')
 
-with app.app_context():
-    db.create_all() 
+        if not username or not password:
+            return {'message': 'Username and password are required.'}, 400
 
+        if User.query.filter_by(username=username).first():
+            return {'message': 'Username already exists.'}, 409
 
- # Define routes for signup and login.
-@app.route('/signup', methods=['POST'])
-def signup():
-    data = request.get_json()
-    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-    new_user = User(username=data['username'],email=data['email'], password=hashed_password)
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({'message': 'User created successfully'}), 201
+        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
+        new_user = User(username=username, password_hash=hashed_password)
+        db.session.add(new_user)
+        db.session.commit()
+
+        session['user_id'] = new_user.id
+
+        return new_user.to_dict(), 201
 
 class Login(Resource):
     def post(self):
@@ -66,16 +68,11 @@ class CheckSession(Resource):
 
         return user.to_dict(), 200
 
-api.add_resource(ClearSession, '/clear', endpoint='clear')
-api.add_resource(Signup, '/signup', endpoint='signup')
-api.add_resource(Login, '/login', endpoint='login')
-api.add_resource(Logout, '/logout', endpoint='logout')
-api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 
 @app.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()
-    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    hashed_password = generate_password_hash(data['password']).decode('utf-8')
     new_user = User(username=data['username'], email=data['email'], password_hash=hashed_password)
     db.session.add(new_user)
     db.session.commit()
@@ -224,6 +221,14 @@ def update_transaction(tx_id):
         return jsonify({'message': 'Transaction updated successfully'})
     else:
         return jsonify({'message': 'Transaction not found'}), 404
+    
+    
+api.add_resource(ClearSession, '/clear', endpoint='clear')
+api.add_resource(Signup, '/signup', endpoint='signup')
+api.add_resource(Login, '/login', endpoint='login')
+api.add_resource(Logout, '/logout', endpoint='logout')
+api.add_resource(CheckSession, '/check_session', endpoint='check_session')
+ 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5555, debug=True)
