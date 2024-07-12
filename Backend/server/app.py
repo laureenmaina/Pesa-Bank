@@ -8,6 +8,15 @@ from flask_bcrypt import bcrypt
 from flask_restful import Resource
 from config import app, db, api
 
+db = SQLAlchemy()
+
+def create_app():
+    app = Flask(__name__)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pesabank.db'
+    db.init_app(app)
+    return app
+    
+
 
 class ClearSession(Resource):
     def delete(self):
