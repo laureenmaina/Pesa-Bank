@@ -15,6 +15,7 @@ def create_app():
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pesabank.db'
     db.init_app(app)
     return app
+
     
 
 class ClearSession(Resource):
