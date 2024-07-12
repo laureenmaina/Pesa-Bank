@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "4845c507adc59bd1915e38428f9292f19323abec1d98c2888e19696b96182fab"
+            "sha256": "ab25cc44da361613770b3aabc7b11270c75eb53c7211fda817a593ad8af2a53e"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -104,6 +104,14 @@
             ],
             "index": "pypi",
             "version": "==1.0.1"
+        },
+        "flask-cors": {
+            "hashes": [
+                "sha256:eeb69b342142fdbf4766ad99357a7f3876a2ceb77689dc10ff912aac06c389e4",
+                "sha256:f2a704e4458665580c074b714c4627dd5a306b333deb9074d0b1794dfa2fb677"
+            ],
+            "index": "pypi",
+            "version": "==4.0.1"
         },
         "flask-jwt-extended": {
             "hashes": [
@@ -394,6 +402,21 @@
                 "sha256:328171f4e3623139da4983451950b28e95ac706e13f3f2630a879749e7a8b319"
             ],
             "version": "==2024.1"
+        },
+        "repoze.lru": {
+            "hashes": [
+                "sha256:0429a75e19380e4ed50c0694e26ac8819b4ea7851ee1fc7583c8572db80aff77",
+                "sha256:f77bf0e1096ea445beadd35f3479c5cff2aa1efe604a133e67150bc8630a62ea"
+            ],
+            "version": "==0.7"
+        },
+        "routes": {
+            "hashes": [
+                "sha256:b6346459a15f0cbab01a45a90c3d25caf980d4733d628b4cc1952b865125d053",
+                "sha256:fab5a042a3a87778eb271d053ca2723cadf43c95b471532a191a48539cb606ea"
+            ],
+            "index": "pypi",
+            "version": "==2.5.1"
         },
         "setuptools": {
             "hashes": [
