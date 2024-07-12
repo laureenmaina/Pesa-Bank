@@ -7,6 +7,12 @@ name = "pypi"
 flask-jwt-extended = "*"
 flask-bcrypt = "*"
 faker = "*"
+flask-sqlalchemy = "*"
+sqlalchemy-serializer = "*"
+flask-restful = "*"
+flask-migrate = "*"
+flask-cors = "*"
+routes = "*"
 
 [dev-packages]
 

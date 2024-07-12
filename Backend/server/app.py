@@ -101,10 +101,17 @@ api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 #     db.session.commit()
 #     return jsonify({'message': 'User created successfully'}), 201
 
+@users_bp.route('/')
+def index():
+    return jsonify({"message": "Users index"}), 200
+
+
+
 @app.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
-    return jsonify([{'id': user.id, 'username': user.username, 'email': user.email} for user in users])
+    return jsonify({"message": "Users endpoint"}), 200
+
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
@@ -252,5 +259,6 @@ def update_transaction(tx_id):
 
 
 if __name__ == '__main__':
+    app = create_app()
     app = create_app()
     app.run(port=5555, debug=True)
