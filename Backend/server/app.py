@@ -225,4 +225,4 @@ def update_transaction(tx_id):
         return jsonify({'message': 'Transaction not found'}), 404
 
 if __name__ == '__main__':
-    app.run(port=5555, debug=True)
+    app.run(debug=True)
