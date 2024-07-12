@@ -87,6 +87,7 @@ def create_user():
     db.session.commit()
     return jsonify({'message': 'User created successfully'}), 201
 
+
 @app.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
