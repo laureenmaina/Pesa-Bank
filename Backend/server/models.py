@@ -1,58 +1,67 @@
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy_serializer import SerializerMixin
-from sqlalchemy.orm import validates
+from sqlalchemy.orm import validates, relationship
 from datetime import date
-from sqlalchemy import Enum as PgEnum 
+from sqlalchemy import Enum as PgEnum
 from enum import Enum
-from sqlalchemy.ext.hybrid import hybrid_property
-from flask_bcrypt import bcrypt
+from flask_bcrypt import Bcrypt
 
+# Initialize database and bcrypt
 db = SQLAlchemy()
+bcrypt = Bcrypt()
 
-user_groups = db.Table('user_groups',
+def init_db(app):
+    """Initialize the database with the given app."""
+    db.init_app(app)
+
+users_groups = db.Table(
+    'users_groups',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
-    db.Column('group_id', db.Integer, db.ForeignKey('groups.id'), primary_key=True),
-    db.Column('role', db.String, nullable=False) 
+    db.Column('group_id', db.Integer, db.ForeignKey('groups.id'), primary_key=True)
 )
 
 class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), nullable=False)
-    email = db.Column(db.String(20), nullable=False)
-    _password_hash = db.Column(db.String)
-    phone_number = db.Column(db.String(20), nullable=False) 
+    username = db.Column(db.String(50), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    _password_hash = db.Column('password_hash', db.String(128), nullable=False)
+    phone_number = db.Column(db.String(15), nullable=False)
+    
+    # Relationships
     accounts = db.relationship("Account", back_populates="user")
     transactions = db.relationship("Transaction", back_populates="user")
     savings = db.relationship("Saving", back_populates="user")
     loans = db.relationship("Loan", back_populates="user")
     subscriptions = db.relationship("Subscription", back_populates="user")
-    groups = db.relationship('Group', secondary=user_groups, back_populates='users') 
+    groups = relationship('Group', secondary=users_groups, back_populates='users')
 
-    @hybrid_property
-    def password_hash(self):
-        raise Exception('Password hashes may not be viewed.')
+    @property
+    def password(self):
+        raise AttributeError('Password is not readable.')
 
-    @password_hash.setter
-    def password_hash(self, password):
-        password_hash = bcrypt.generate_password_hash(
-            password.encode('utf-8'))
-        self._password_hash = password_hash.decode('utf-8')
+    @password.setter
+    def password(self, password):
+        self._password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    def authenticate(self, password):
-        return bcrypt.check_password_hash(
-            self._password_hash, password.encode('utf-8'))
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self._password_hash, password)
 
     def __repr__(self):
-        return f'User {self.username}, ID: {self.id}'
+        return f'<User {self.username}>'
 
 class Account(db.Model, SerializerMixin):
     __tablename__ = 'accounts'
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, nullable=False)
-    description = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship("User", back_populates="accounts")
+
+    @validates('amount')
+    def validate_amount(self, key, amount):
+        if amount < 0:
+            raise ValueError("Amount cannot be negative.")
+        return amount
 
 class TransactionType(Enum):
     DEPOSIT = "deposit"
@@ -60,12 +69,17 @@ class TransactionType(Enum):
 
 class Transaction(db.Model, SerializerMixin):
     __tablename__ = 'transactions'
-    
     id = db.Column(db.Integer, primary_key=True)
     amount = db.Column(db.Float, nullable=False)
     type = db.Column(PgEnum(TransactionType), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship("User", back_populates="transactions")
+
+    @validates('amount')
+    def validate_amount(self, key, amount):
+        if amount < 0:
+            raise ValueError("Amount cannot be negative.")
+        return amount
 
 class Saving(db.Model, SerializerMixin):
     __tablename__ = 'savings'
@@ -109,12 +123,22 @@ class Subscription(db.Model, SerializerMixin):
     status = db.Column(db.String, nullable=False, default='active')
     service_provider = db.Column(db.String, nullable=False)
     plan = db.Column(db.String, nullable=False)
-    amount=db.Column(db.Integer,nullable=False)
+    amount = db.Column(db.Float, nullable=False)
 
     user = db.relationship("User", back_populates="subscriptions")
+
+    @validates('amount')
+    def validate_amount(self, key, amount):
+        if amount < 0:
+            raise ValueError("Amount cannot be negative.")
+        return amount
 
 class Group(db.Model, SerializerMixin):
     __tablename__ = 'groups'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
-    users = db.relationship('User', secondary=user_groups, back_populates='groups')
+    amount = db.Column(db.Float, nullable=False)
+    users = db.relationship('User', secondary=users_groups, back_populates='groups')
+
+    __table_args__ = (db.UniqueConstraint('name', name='uq_group_name'),)
+

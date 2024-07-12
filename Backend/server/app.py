@@ -1,11 +1,30 @@
-from flask import  jsonify, request, session
-from models import db, User, Transaction, Subscription, TransactionType
-from datetime import datetime
+from flask import Flask, jsonify, request, session,Blueprint
+from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import bcrypt
-from flask_restful import Resource
+from flask_restful import Resource, Api
+from flask_migrate import Migrate
+from werkzeug.security import generate_password_hash
+from datetime import datetime
+from models import User, Subscription, Transaction, TransactionType
 from config import app, db, api
 
+users_bp = Blueprint('users', __name__)
+db = SQLAlchemy()
 
+def create_app():
+    app = Flask(__name__)
+    app.register_blueprint(users_bp)
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pesabank.db'
+    
+    db.init_app(app)
+    
+    with app.app_context():
+        db.create_all()
+
+    return app
+
+
+# Resource classes
 class ClearSession(Resource):
     def delete(self):
         session.clear()
@@ -42,7 +61,7 @@ class Login(Resource):
             return {'message': 'Username and password are required.'}, 400
 
         user = User.query.filter_by(username=username).first()
-        if user and user.authenticate(password):
+        if user and user.authenticate(password) :
             session['user_id'] = user.id
             return user.to_dict(), 200
 
@@ -64,21 +83,23 @@ class CheckSession(Resource):
             return {}, 204
 
         return user.to_dict(), 200
-
+    
+# Registering the resources
 api.add_resource(ClearSession, '/clear', endpoint='clear')
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 
-@app.route('/users', methods=['POST'])
-def create_user():
-    data = request.get_json()
-    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
-    new_user = User(username=data['username'], email=data['email'], password_hash=hashed_password)
-    db.session.add(new_user)
-    db.session.commit()
-    return jsonify({'message': 'User created successfully'}), 201
+# Route handlers
+# @app.route('/users', methods=['POST'])
+# def create_user():
+#     data = request.get_json()
+#     hashed_password = generate_password_hash(data['password']).decode('utf-8')
+#     new_user = User(username=data['username'], email=data['email'], password_hash=hashed_password)
+#     db.session.add(new_user)
+#     db.session.commit()
+#     return jsonify({'message': 'User created successfully'}), 201
 
 @app.route('/users', methods=['GET'])
 def get_users():
@@ -123,7 +144,8 @@ def create_subscription():
         user_id=data['user_id'],
         name=data['name'],
         amount=data['amount'],
-        date_subscribed=datetime.strptime(data['date_subscribed'], '%Y-%m-%d')
+        start_date=datetime.strptime(data['start_date'], '%Y-%m-%d')
+        
     )
     db.session.add(new_subscription)
     db.session.commit()
@@ -137,7 +159,9 @@ def get_subscriptions():
         'user_id': sub.user_id,
         'service_provider': sub.service_provider,
         'amount': sub.amount,
-        'start_date': sub.start_date.strftime('%Y-%m-%d')
+        'start_date': sub.start_date.strftime('%Y-%m-%d'),
+        'end_date':sub.end_date.strftime('%Y-%m-%d')
+
     } for sub in subscriptions])
 
 @app.route('/subscriptions/<int:sub_id>', methods=['GET'])
@@ -149,7 +173,8 @@ def get_subscription(sub_id):
             'user_id': subscription.user_id,
             'service_provider': subscription.service_provider,
             'amount': subscription.amount,
-            'start_date': subscription.start_date.strftime('%Y-%m-%d')
+            'start_date': subscription.start_date.strftime('%Y-%m-%d'),
+            'end_date': subscription.end_date.strftime('%Y-%m-%d')
         })
     else:
         return jsonify({'message': 'Subscription not found'}), 404
@@ -183,7 +208,7 @@ def create_transaction():
     new_transaction = Transaction(
         user_id=data['user_id'],
         amount=data['amount'],
-        type=TransactionType[data['type'].upper()]  # Convert to uppercase to match the enum
+        type=TransactionType[data['type'].upper()] 
     )
     db.session.add(new_transaction)
     db.session.commit()
@@ -218,11 +243,14 @@ def update_transaction(tx_id):
     transaction = Transaction.query.get(tx_id)
     if transaction:
         transaction.amount = data['amount']
-        transaction.type = TransactionType[data['type'].upper()]  # Convert to uppercase to match the enum
+        transaction.type = TransactionType[data['type'].upper()] 
         db.session.commit()
         return jsonify({'message': 'Transaction updated successfully'})
     else:
         return jsonify({'message': 'Transaction not found'}), 404
 
+
+
 if __name__ == '__main__':
+    app = create_app()
     app.run(port=5555, debug=True)
