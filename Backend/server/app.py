@@ -1,7 +1,6 @@
-from flask import Flask, jsonify, request
-from models import db, User, Transaction, Subscription,TransactionType
+from flask import  jsonify, request, session
+from models import db, User, Transaction, Subscription, TransactionType
 from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from flask_jwt_extended import JWTManager, create_access_token, jwt_required,  get_jwt
 from flask_cors import CORS
@@ -34,46 +33,50 @@ def signup():
     db.session.commit()
     return jsonify({'message': 'User created successfully'}), 201
 
-    
-@app.route('/login', methods=['POST'])
-def login():
-    data = request.get_json()
-    username = data.get("username")
-    password = data.get("password")
+class Login(Resource):
+    def post(self):
+        json_data = request.get_json()
+        username = json_data.get('username')
+        password = json_data.get('password')
 
-    if not username or not password:
-        return jsonify({"message": "Username and password are required"}), 400
+        if not username or not password:
+            return {'message': 'Username and password are required.'}, 400
 
-    user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(username=username).first()
+        if user and user.authenticate(password):
+            session['user_id'] = user.id
+            return user.to_dict(), 200
 
-    if user and bcrypt.check_password_hash(user.password, password): 
-        access_token = create_access_token(identity=user.id) 
-        return jsonify({"access_token": access_token})
+        return {'message': 'Invalid username or password.'}, 401
 
-    else:
-        return jsonify({"message": "Invalid username or password"}), 401
+class Logout(Resource):
+    def delete(self):
+        session.pop('user_id', None)
+        return {}, 204
 
+class CheckSession(Resource):
+    def get(self):
+        user_id = session.get('user_id')
+        if not user_id:
+            return {}, 204
 
-# Logout
-BLACKLIST = set() 
-@jwt.token_in_blocklist_loader
-def check_if_token_in_blocklist(jwt_header, decrypted_token):
-    return decrypted_token['jti'] in BLACKLIST
+        user = User.query.get(user_id)
+        if not user:
+            return {}, 204
 
-@app.route("/logout", methods=["POST"])
-@jwt_required()
-def logout():
-    jti = get_jwt()["jti"] 
-    BLACKLIST.add(jti)
-    return jsonify({"success":"Successfully logged out"}), 200
+        return user.to_dict(), 200
 
-
-    # CRUD Operations at least for one resource(User)
+api.add_resource(ClearSession, '/clear', endpoint='clear')
+api.add_resource(Signup, '/signup', endpoint='signup')
+api.add_resource(Login, '/login', endpoint='login')
+api.add_resource(Logout, '/logout', endpoint='logout')
+api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 
 @app.route('/users', methods=['POST'])
 def create_user():
     data = request.get_json()
-    new_user = User(username=data['username'],email=data['email'], password=bcrypt.generate_password_hash( data['password'] ).decode("utf-8")) 
+    hashed_password = bcrypt.generate_password_hash(data['password']).decode('utf-8')
+    new_user = User(username=data['username'], email=data['email'], password_hash=hashed_password)
     db.session.add(new_user)
     db.session.commit()
     return jsonify({'message': 'User created successfully'}), 201
@@ -81,14 +84,13 @@ def create_user():
 @app.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
-    return jsonify([{'id': user.id, 'username': user.username,'email':user.email} for user in users])
-
+    return jsonify([{'id': user.id, 'username': user.username, 'email': user.email} for user in users])
 
 @app.route('/users/<int:user_id>', methods=['GET'])
 def get_user(user_id):
     user = User.query.get(user_id)
     if user:
-        return jsonify({'id': user.id, 'username': user.username, 'email':user.email})
+        return jsonify({'id': user.id, 'username': user.username, 'email': user.email})
     else:
         return jsonify({'message': 'User not found'}), 404
 
@@ -99,7 +101,7 @@ def update_user(user_id):
     if user:
         user.username = data['username']
         user.email = data['email']
-        user.password = bcrypt.generate_password_hash(data['password']).decode("utf-8")
+        user.password_hash = bcrypt.generate_password_hash(data['password']).decode('utf-8')
         db.session.commit()
         return jsonify({'message': 'User updated successfully'})
     else:
@@ -113,10 +115,7 @@ def delete_user(user_id):
         db.session.commit()
         return jsonify({'message': 'User deleted successfully'})
     else:
-        return jsonify({'message': 'User not found'}), 404   
-    
-
-# Subscription CRUD Operations
+        return jsonify({'message': 'User not found'}), 404
 
 @app.route('/subscriptions', methods=['POST'])
 def create_subscription():
@@ -178,9 +177,6 @@ def delete_subscription(sub_id):
         return jsonify({'message': 'Subscription deleted successfully'})
     else:
         return jsonify({'message': 'Subscription not found'}), 404
-    
-
-# Define create and read operations for Transaction.
 
 @app.route('/transactions', methods=['POST'])
 def create_transaction():
@@ -193,7 +189,6 @@ def create_transaction():
     db.session.add(new_transaction)
     db.session.commit()
     return jsonify({'message': 'Transaction created successfully'}), 201
-
 
 @app.route('/transactions', methods=['GET'])
 def get_transactions():
@@ -217,8 +212,7 @@ def get_transaction(tx_id):
         })
     else:
         return jsonify({'message': 'Transaction not found'}), 404
-    
-    
+
 @app.route('/transactions/<int:tx_id>', methods=['PUT'])
 def update_transaction(tx_id):
     data = request.get_json()
@@ -231,6 +225,5 @@ def update_transaction(tx_id):
     else:
         return jsonify({'message': 'Transaction not found'}), 404
 
-
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5555, debug=True)
