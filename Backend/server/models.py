@@ -4,6 +4,8 @@ from sqlalchemy.orm import validates
 from datetime import date
 from sqlalchemy import Enum as PgEnum 
 from enum import Enum
+from sqlalchemy.ext.hybrid import hybrid_property
+from flask_bcrypt import bcrypt
 
 db = SQLAlchemy()
 
@@ -18,6 +20,7 @@ class User(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), nullable=False)
     email = db.Column(db.String(20), nullable=False)
+    _password_hash = db.Column(db.String)
     phone_number = db.Column(db.String(20), nullable=False) 
     accounts = db.relationship("Account", back_populates="user")
     transactions = db.relationship("Transaction", back_populates="user")
@@ -25,6 +28,23 @@ class User(db.Model, SerializerMixin):
     loans = db.relationship("Loan", back_populates="user")
     subscriptions = db.relationship("Subscription", back_populates="user")
     groups = db.relationship('Group', secondary=user_groups, back_populates='users') 
+
+    @hybrid_property
+    def password_hash(self):
+        raise Exception('Password hashes may not be viewed.')
+
+    @password_hash.setter
+    def password_hash(self, password):
+        password_hash = bcrypt.generate_password_hash(
+            password.encode('utf-8'))
+        self._password_hash = password_hash.decode('utf-8')
+
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(
+            self._password_hash, password.encode('utf-8'))
+
+    def __repr__(self):
+        return f'User {self.username}, ID: {self.id}'
 
 class Account(db.Model, SerializerMixin):
     __tablename__ = 'accounts'
