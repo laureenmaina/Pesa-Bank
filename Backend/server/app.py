@@ -17,7 +17,6 @@ def create_app():
     return app
     
 
-
 class ClearSession(Resource):
     def delete(self):
         session.clear()
