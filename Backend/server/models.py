@@ -118,3 +118,5 @@ class Group(db.Model, SerializerMixin):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     users = db.relationship('User', secondary=user_groups, back_populates='groups')
+    
+
