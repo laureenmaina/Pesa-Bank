@@ -52,7 +52,7 @@ def downgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('amount', sa.Float(), nullable=False),
-    sa.Column('type', sa.Enum('deposit', 'withdraw', name='transactiontype'), nullable=False),  # Adjust Enum type as needed
+    sa.Column('type', sa.Enum('deposit', 'withdraw', name='transactiontype'), nullable=False), 
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
@@ -69,6 +69,7 @@ def downgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('borrowed_amount', sa.Float(), nullable=False),
     sa.Column('borrow_date', sa.Date(), nullable=False),
+    sa.Column('interest_rate',sa.Float(),nullable=False),
     sa.Column('target_date', sa.Date(), nullable=False),
     sa.Column('trustee', sa.String(length=100), nullable=False),
     sa.Column('trustee_phone_number', sa.String(length=15), nullable=False),

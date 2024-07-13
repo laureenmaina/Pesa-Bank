@@ -3,7 +3,7 @@ from random import randint
 from datetime import date
 from flask_bcrypt import Bcrypt
 from app import app, db
-from models import User, Account, Transaction, Saving, Loan, Subscription, Group
+from models import User, Account, Transaction,TransactionType, Saving, Loan, Subscription, Group
 
 fake = Faker()
 bcrypt = Bcrypt()
@@ -28,7 +28,7 @@ def add_users():
                 phone_number=fake.phone_number()
             )
             users.append(user)
-        db.session.add(users)
+        db.session.add_all(users)
         db.session.commit()
         return users
 
@@ -55,9 +55,10 @@ def add_transactions(users):
         for user in users:
             num_transactions = randint(1, 5)
             for _ in range(num_transactions):
+                transaction_type = fake.random_element(elements=('DEPOSIT', 'WITHDRAW'))
                 transaction = Transaction(
                     amount=round(fake.pyfloat(left_digits=4, right_digits=2, positive=True), 2),
-                    type=fake.random_element(elements=('DEPOSIT', 'WITHDRAW')),
+                    type=TransactionType[transaction_type], 
                     user=user
                 )
                 transactions.append(transaction)
@@ -91,19 +92,22 @@ def add_loans(users):
             for _ in range(num_loans):
                 borrow_date = fake.date_between(start_date='-3y', end_date='today')
                 target_date = fake.date_between(start_date='today', end_date='+3y')
+                
                 loan = Loan(
                     borrowed_amount=round(fake.pyfloat(left_digits=5, right_digits=2, positive=True), 2),
                     borrow_date=borrow_date,
+                    interest_rate=round(fake.pyfloat(left_digits=1, right_digits=2, positive=True), 2), 
                     target_date=target_date,
                     trustee=fake.name(),
                     trustee_phone_number=fake.phone_number(),
                     user=user
                 )
                 loans.append(loan)
+        
         db.session.add_all(loans)
         db.session.commit()
         return loans
-
+    
 def add_subscriptions(users):
     """Adds mock subscriptions for each user."""
     with app.app_context():
@@ -126,16 +130,36 @@ def add_subscriptions(users):
 def add_groups(users):
     """Adds mock groups for users."""
     with app.app_context():
+        groups = []
         for user in users:
-            db.session.add(user)  # Ensure user is in session
+            db.session.add(user)
             group = Group(
-                name=fake.group_name(),
+                name=fake.company(),
                 amount=round(fake.pyfloat(left_digits=4, right_digits=2, positive=True), 2),
             )
-            user.groups.append(group)  # Append group to user's groups
-            db.session.add(group)  # Add group to the session
+            user.groups.append(group)  
+            groups.append(group)
+            db.session.add(group)
 
         db.session.commit()
+        return groups 
+    
+def add_savings(users):
+    """Adds mock savings for users."""
+    with app.app_context():
+        savings = []
+        for user in users:
+            db.session.add(user)
+            saving = Saving(
+                amount=round(fake.pyfloat(left_digits=4, right_digits=2, positive=True), 2),
+                target_date=fake.date_between(start_date='today', end_date='+1y'),  # Random date within the next year
+                user_id=user.id
+            )
+            savings.append(saving)
+            db.session.add(saving)
+
+        db.session.commit()
+        return savings
 
 
 if __name__ == '__main__':
