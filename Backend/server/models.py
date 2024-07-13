@@ -6,7 +6,6 @@ from sqlalchemy import Enum as PgEnum
 from enum import Enum
 from flask_bcrypt import Bcrypt
 
-# Initialize database and bcrypt
 db = SQLAlchemy()
 bcrypt = Bcrypt()
 
@@ -50,12 +49,7 @@ class User(db.Model, SerializerMixin):
         return bcrypt.check_password_hash(self.password_hash, password)
 
     def to_dict(self):
-        return {
-            'id': self.id,
-            'username': self.username,
-            'email': self.email,
-            'phone_number': self.phone_number
-        }
+        return {'id': self.id,'username': self.username,'email': self.email,'phone_number': self.phone_number}
     
     def __repr__(self):
         return f'<User {self.username}>'
@@ -98,12 +92,7 @@ class Transaction(db.Model, SerializerMixin):
         return value
     
     def to_dict(self):
-        return {
-            'id': self.id,
-            'amount': self.amount,
-            'type': self.type.value,  
-            'user_id': self.user_id,
-        }
+        return {'id': self.id,'amount': self.amount,'type': self.type.value,'user_id': self.user_id,}
 
 class Saving(db.Model, SerializerMixin):
     __tablename__ = 'savings'

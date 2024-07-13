@@ -7,18 +7,16 @@ from models import db, User, Subscription, Transaction, TransactionType, Loan,Sa
 
 app = Flask(__name__)
 
-# Configuration
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pesabank.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
 
-# Initialize extensions
 db.init_app(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 api = Api(app)
 
-# Define your resources and routes
+# Resources 
 class ClearSession(Resource):
     def delete(self):
         session.clear()
@@ -78,13 +76,14 @@ class CheckSession(Resource):
 
         return user.to_dict(), 200
 
-# Registering the resources
+# Registering resources
 api.add_resource(ClearSession, '/clear', endpoint='clear')
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 
+#Routes
 @app.route('/users', methods=['GET'], endpoint='get_users')
 def get_users():
     users = User.query.all()
@@ -94,7 +93,6 @@ def get_users():
 def create_user():
     data = request.get_json()
     
-    # Ensure all required fields are present
     required_fields = ['username', 'email', 'password']
     for field in required_fields:
         if field not in data:
@@ -132,13 +130,11 @@ def delete_user(user_id):
 def create_subscription():
     data = request.get_json()
 
-    # Validate required fields
     required_keys = ['user_id', 'service_provider', 'amount', 'plan', 'start_date', 'end_date']
     for key in required_keys:
         if key not in data:
             return jsonify({'message': f'Missing required field: {key}'}), 400
 
-    # Validate dates
     try:
         start_date = date.fromisoformat(data['start_date'])
         end_date = date.fromisoformat(data['end_date'])
