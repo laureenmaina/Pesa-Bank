@@ -1,13 +1,11 @@
-from flask_sqlalchemy import SQLAlchemy
+from config import db, bcrypt
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates
 from datetime import date
 from sqlalchemy import Enum as PgEnum 
 from enum import Enum
 from sqlalchemy.ext.hybrid import hybrid_property
-from flask_bcrypt import bcrypt
 
-db = SQLAlchemy()
 
 user_groups = db.Table('user_groups',
     db.Column('user_id', db.Integer, db.ForeignKey('users.id'), primary_key=True),
@@ -22,12 +20,15 @@ class User(db.Model, SerializerMixin):
     email = db.Column(db.String(20), nullable=False)
     _password_hash = db.Column(db.String)
     phone_number = db.Column(db.String(20), nullable=False) 
+
     accounts = db.relationship("Account", back_populates="user")
     transactions = db.relationship("Transaction", back_populates="user")
     savings = db.relationship("Saving", back_populates="user")
     loans = db.relationship("Loan", back_populates="user")
     subscriptions = db.relationship("Subscription", back_populates="user")
     groups = db.relationship('Group', secondary=user_groups, back_populates='users') 
+
+    serialize_rules=("-accounts.user", "-transactions.user", "-savings.user", "-loans.user", "-subscriptions.user", "-groups.users")
 
     @hybrid_property
     def password_hash(self):
@@ -90,6 +91,7 @@ class Loan(db.Model, SerializerMixin):
     trustee = db.Column(db.String, nullable=False)
     trustee_phone_number = db.Column(db.String, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+
     user = db.relationship("User", back_populates="loans")
 
     @validates('borrow_date', 'target_date')

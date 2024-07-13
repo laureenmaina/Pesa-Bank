@@ -1,30 +1,12 @@
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask import  jsonify, request, session,Blueprint
-from models import db, User, Transaction, Subscription, TransactionType
+from config import Flask, app, db, api, bcrypt
+from models import User, Transaction, Subscription, TransactionType
+from flask import  jsonify, request, session, make_response
+
 from werkzeug.security import generate_password_hash
-
 from datetime import datetime
-from flask_bcrypt import bcrypt
 from flask_restful import Resource
-from config import app, db, api
-
-users_bp = Blueprint('users', __name__)
-
-db = SQLAlchemy()
 
 
-def create_app():
-    app = Flask(__name__)
-    app.register_blueprint(users_bp)
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pesabank.db'
-    
-
-    db.init_app(app)
-    
-    return app
-
-    
 class ClearSession(Resource):
     def delete(self):
         session.clear()
@@ -42,21 +24,20 @@ class Signup(Resource):
         if User.query.filter_by(username=username).first():
             return {'message': 'Username already exists.'}, 409
 
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        new_user = User(username=username, password_hash=hashed_password)
+        new_user = User(username=username)
+        new_user.password_hash = password 
         db.session.add(new_user)
         db.session.commit()
 
         session['user_id'] = new_user.id
 
         return new_user.to_dict(), 201
-
+    
 class Login(Resource):
-    def login():
-        username = request.json.get('username', None)
-        password = request.json.password('password', None)
-
-        user = User.query.filter_by(username=username).first()
+    def post(self):
+        json_data = request.get_json()
+        username = json_data.get('username')
+        password = json_data.get('password')
 
         if not username or not password:
             return {'message': 'Username and password are required.'}, 400
@@ -84,6 +65,8 @@ class CheckSession(Resource):
             return {}, 204
 
         return user.to_dict(), 200
+    
+    # User CRUD Operations
 
 
 @app.route('/users', methods=['POST'])
@@ -95,16 +78,13 @@ def create_user():
     db.session.commit()
     return jsonify({'message': 'User created successfully'}), 201
 
-@users_bp.route('/')
-def index():
-    return jsonify({"message": "Users index"}), 200
-
 
 
 @app.route('/users', methods=['GET'])
 def get_users():
     users = User.query.all()
-    return jsonify({"message": "Users endpoint"}), 200
+    return make_response([user.to_dict() for user in users], 200)
+    
 
 
 @app.route('/users/<int:user_id>', methods=['GET'])
@@ -137,6 +117,8 @@ def delete_user(user_id):
         return jsonify({'message': 'User deleted successfully'})
     else:
         return jsonify({'message': 'User not found'}), 404
+    
+    # Subscriptions CRUD Operations
 
 @app.route('/subscriptions', methods=['POST'])
 def create_subscription():
@@ -198,6 +180,8 @@ def delete_subscription(sub_id):
         return jsonify({'message': 'Subscription deleted successfully'})
     else:
         return jsonify({'message': 'Subscription not found'}), 404
+    
+    #Transactions CRUD Operations
 
 @app.route('/transactions', methods=['POST'])
 def create_transaction():
@@ -256,5 +240,4 @@ api.add_resource(CheckSession, '/check_session', endpoint='check_session')
 
 
 if __name__ == '__main__':
-    app = create_app()
     app.run(port=5555, debug=True)
