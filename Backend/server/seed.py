@@ -17,6 +17,7 @@ def add_users():
         user = User(
             username=fake.user_name(),
             email=fake.email(),
+            _password_hash="password",
             phone_number=fake.phone_number()
         )
         users.append(user)
