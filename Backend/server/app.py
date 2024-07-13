@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request, session
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
-from datetime import datetime,date
+from datetime import date
 from models import db, User, Subscription, Transaction, TransactionType, Loan,Saving
 
 app = Flask(__name__)
@@ -76,7 +76,7 @@ class CheckSession(Resource):
 
         return user.to_dict(), 200
     
-    # User CRUD Operations
+
 
 # Registering resources
 api.add_resource(ClearSession, '/clear', endpoint='clear')
@@ -351,7 +351,6 @@ def create_saving():
 
         return jsonify({'message': 'Saving created successfully'}), 201
       
-
 
 if __name__ == '__main__':
     app.run(debug=True)
