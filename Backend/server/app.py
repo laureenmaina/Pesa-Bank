@@ -52,10 +52,11 @@ class Signup(Resource):
         return new_user.to_dict(), 201
 
 class Login(Resource):
-    def post(self):
-        json_data = request.get_json()
-        username = json_data.get('username')
-        password = json_data.get('password')
+    def login():
+        username = request.json.get('username', None)
+        password = request.json.password('password', None)
+
+        user = User.query.filter_by(username=username).first()
 
         if not username or not password:
             return {'message': 'Username and password are required.'}, 400
