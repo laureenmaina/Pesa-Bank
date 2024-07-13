@@ -175,7 +175,7 @@ if __name__ == '__main__':
     subscriptions = add_subscriptions(users)
     groups = add_groups(users)
 
-    # Adding all data in one transaction for performance
+   
     with app.app_context():
         db.session.add_all(users + accounts + transactions + savings + loans + subscriptions + groups)
         db.session.commit()

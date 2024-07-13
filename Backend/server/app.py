@@ -42,7 +42,7 @@ class Signup(Resource):
         session['user_id'] = new_user.id
 
         return new_user.to_dict(), 201
-
+    
 class Login(Resource):
     def post(self):
         json_data = request.get_json()
@@ -75,6 +75,8 @@ class CheckSession(Resource):
             return {}, 204
 
         return user.to_dict(), 200
+    
+    # User CRUD Operations
 
 # Registering resources
 api.add_resource(ClearSession, '/clear', endpoint='clear')
@@ -104,7 +106,7 @@ def create_user():
     db.session.commit()
     
     return jsonify({'message': 'User created successfully'}), 201
-
+    
 
 
 @app.route('/users/<int:user_id>', methods=['GET'], endpoint='get_user')
@@ -125,6 +127,7 @@ def delete_user(user_id):
         return jsonify({'message': 'User deleted successfully'}), 200
     else:
         return jsonify({'message': 'User not found'}), 404
+    
 
 @app.route('/subscriptions', methods=['POST'], endpoint='create_subscription')
 def create_subscription():
@@ -209,12 +212,15 @@ def update_subscription(sub_id):
 @app.route('/subscriptions/<int:sub_id>', methods=['DELETE'], endpoint='delete_subscription')
 def delete_subscription(sub_id):
     subscription = Subscription.query.get(sub_id)
+
     if subscription:
         db.session.delete(subscription)
         db.session.commit()
+
         return jsonify({'message': 'Subscription deleted successfully'}), 200
     else:
         return jsonify({'message': 'Subscription not found'}), 404
+    
 
 @app.route('/transactions', methods=['POST'], endpoint='create_transaction')
 def create_transaction():
@@ -241,6 +247,7 @@ def get_transactions():
 @app.route('/transactions/<int:tx_id>', methods=['GET'], endpoint='get_transaction')
 def get_transaction(tx_id):
     transaction = Transaction.query.get(tx_id)
+
     if transaction:
         return jsonify({
             'id': transaction.id,
@@ -255,7 +262,9 @@ def get_transaction(tx_id):
 def update_transaction(tx_id):
     data = request.get_json()
     transaction = Transaction.query.get(tx_id)
+
     if transaction:
+
         transaction.amount = data['amount']
         transaction.type = TransactionType[data['type'].upper()]
         db.session.commit()
@@ -266,9 +275,11 @@ def update_transaction(tx_id):
 @app.route('/transactions/<int:tx_id>', methods=['DELETE'], endpoint='delete_transaction')
 def delete_transaction(tx_id):
     transaction = Transaction.query.get(tx_id)
+
     if transaction:
         db.session.delete(transaction)
         db.session.commit()
+        
         return jsonify({'message': 'Transaction deleted successfully'}), 200
     else:
         return jsonify({'message': 'Transaction not found'}), 404
