@@ -151,7 +151,7 @@ class Subscription(db.Model, SerializerMixin):
     @validates('end_date')
     def validate_end_date(self, key, end_date):
         if end_date and end_date < self.start_date:
-            raise ValueError("End date cannot be before start date.")
+            ValueError("End date cannot be before start date.")
         return end_date
     
     @validates('amount')
