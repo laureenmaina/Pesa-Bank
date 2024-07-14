@@ -20,13 +20,10 @@ def add_users():
         users = []
         for _ in range(10):
             password = fake.password()
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
             user = User(
-                username=fake.user_name(),
-                email=fake.email(),
-                _password_hash=hashed_password,
-                phone_number=fake.phone_number()
+                username=fake.user_name()
             )
+            user.password = password
             users.append(user)
         db.session.add_all(users)
         db.session.commit()
@@ -115,8 +112,8 @@ def add_subscriptions(users):
         for user in users:
             subscription = Subscription(
                 user=user,
-                start_date=fake.date_between(start_date='-1y', end_date='today'),
-                end_date=fake.date_between(start_date='today', end_date='+1y'),
+                start_date=fake.date_between(start_date='today', end_date='+1y'),  # Ensure start date is today or in the future
+                end_date=fake.date_between(start_date='today', end_date='+1y'),  # Set end date within the next year
                 status=fake.random_element(elements=('active', 'inactive', 'pending')),
                 service_provider=fake.random_element(elements=('Netflix', 'Prime', 'Hulu', 'Disney+')),
                 plan=fake.random_element(elements=('basic', 'premium', 'enterprise')),
@@ -126,6 +123,7 @@ def add_subscriptions(users):
         db.session.add_all(subscriptions)
         db.session.commit()
         return subscriptions
+
 
 def add_groups(users):
     """Adds mock groups for users."""

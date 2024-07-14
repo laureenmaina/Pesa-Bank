@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 
+import { useHistory } from 'react-router-dom';
+
 function Login({ setUser }) {
+
+  const history = useHistory();
+
   const [credentials, setCredentials] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
 
@@ -22,7 +27,10 @@ function Login({ setUser }) {
     })
       .then((response) => {
         if (response.ok) {
-          response.json().then((user) => setUser(user));
+          response.json().then((user) => {
+            setUser(user);
+            history.push("/");
+          });
         } else {
           setError("Invalid username or password. Please signup if you haven't already");
         }

@@ -1,6 +1,4 @@
 import React from 'react';
-import './styles/Home.css';
-import DashNavBar from './DashNavBar';
 
 const greeting = () => {
   const hour = new Date().getHours();
@@ -9,13 +7,19 @@ const greeting = () => {
   return 'Good Evening';
 };
 
-function Home({ user }) {
+const capitalizeFirstLetter = (string) => {
+  return string?.charAt(0).toUpperCase() + string?.slice(1) || '-';
+};
+
+function Home({ user }) { 
+
+  console.log("Rendering Home with user:", user);
+
   if (user) {
     return (
       <div>
-        <DashNavBar />
         <h2 className="home-container">
-          {greeting()}, {user.username}
+          {greeting()}, {capitalizeFirstLetter(user.username)}
         </h2>
       </div>
     );

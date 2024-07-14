@@ -1,6 +1,10 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 
 function SignUp({ setUser }) {
+
+  const history = useHistory();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirmation, setPasswordConfirmation] = useState("");
@@ -15,12 +19,11 @@ function SignUp({ setUser }) {
       body: JSON.stringify({
         username,
         password,
-        password_confirmation: passwordConfirmation,
       }),
     })
       .then((response) => {
         if (!response.ok) {
-          if (response.status === 422) {
+          if (response.status === 409) { // Change to 409 based on your backend response
             setError("Username already exists. Please log in.");
           } else {
             throw new Error("Network response was not ok");
@@ -28,16 +31,26 @@ function SignUp({ setUser }) {
         }
         return response.json();
       })
-      .then((user) => setUser(user))
+      .then((user) => {
+        setUser(user);
+        history.push("/");
+      })
       .catch((error) => {
         console.error("Error signing up:", error);
-        setError("Username already exists. Please log in.");
+        setError("An error occurred during signup.");
       });
   }
 
   function handleSubmit(e) {
     e.preventDefault();
     setError(null); // Reset error state
+
+    // Check if passwords match
+    if (password !== passwordConfirmation) {
+      setError("Passwords do not match.");
+      return; // Prevent submission
+    }
+
     handleSignUp();
   }
 

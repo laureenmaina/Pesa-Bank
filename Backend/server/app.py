@@ -3,13 +3,19 @@ from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from datetime import date
-from models import db, User, Subscription, Transaction, TransactionType, Loan,Saving
+
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from server.models import db, User, Subscription, Transaction, TransactionType, Loan,Saving
 
 app = Flask(__name__)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pesabank.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
+app.config['SECRET_KEY'] = 'freshibarida'
 
 db.init_app(app)
 migrate = Migrate(app, db)
@@ -34,8 +40,8 @@ class Signup(Resource):
         if User.query.filter_by(username=username).first():
             return {'message': 'Username already exists.'}, 409
 
-        hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-        new_user = User(username=username, password=hashed_password)
+        new_user = User(username=username)
+        new_user.password = password  # Use the password setter to hash the password
         db.session.add(new_user)
         db.session.commit()
 
@@ -53,7 +59,7 @@ class Login(Resource):
             return {'message': 'Username and password are required.'}, 400
 
         user = User.query.filter_by(username=username).first()
-        if user and bcrypt.check_password_hash(user.password, password):
+        if user and user.check_password(password):  # Use the check_password method
             session['user_id'] = user.id
             return user.to_dict(), 200
 
