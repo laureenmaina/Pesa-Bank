@@ -19,9 +19,9 @@ class User(db.Model, SerializerMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True, nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
+    # email = db.Column(db.String(120), unique=True)
     password_hash = db.Column('password_hash', db.String(128), nullable=False)
-    phone_number = db.Column(db.String(15), nullable=False)
+    # phone_number = db.Column(db.String(15))
     
     # Relationships
     accounts = db.relationship("Account", back_populates="user")
@@ -49,7 +49,7 @@ class User(db.Model, SerializerMixin):
         return bcrypt.check_password_hash(self.password_hash, password)
 
     def to_dict(self):
-        return {'id': self.id,'username': self.username,'email': self.email,'phone_number': self.phone_number}
+        return {'id': self.id,'username': self.username}
     
     def __repr__(self):
         return f'<User {self.username}>'

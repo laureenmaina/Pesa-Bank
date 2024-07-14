@@ -22,7 +22,7 @@
     /* Remove underline from links */
     color: white;
     /* Set text color */
-    font-size: 18px;
+    font-size: 20px;
     /* Adjust font size */
 }
 
@@ -32,5 +32,7 @@
 }
 
 .active-link {
+    background-color: #0078f8;
+    padding: 15px;
     font-weight: bold;
 }
