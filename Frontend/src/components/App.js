@@ -16,7 +16,7 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/check_session").then((r) => {
+    fetch("/session").then((r) => {
       if (r.ok && r.status !== 200) {
         setLoading(false);
       } else {

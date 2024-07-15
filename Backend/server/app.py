@@ -3,6 +3,7 @@ from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from datetime import date
+from flask_cors import CORS
 
 import sys
 import os
@@ -11,6 +12,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from server.models import db, User, Subscription, Transaction, TransactionType, Loan,Saving
 
 app = Flask(__name__)
+CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pesabank.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -234,11 +236,17 @@ def create_transaction():
     new_transaction = Transaction(
         user_id=data['user_id'],
         amount=data['amount'],
-        type=TransactionType[data['type'].upper()]
+        type=TransactionType[data['type'].upper()],
+        
     )
     db.session.add(new_transaction)
     db.session.commit()
-    return jsonify({'message': 'Transaction created successfully'}), 201
+    return jsonify({
+        'id': new_transaction.id,
+        'user_id': new_transaction.user_id,
+        'amount': new_transaction.amount,
+        'type': new_transaction.type.value,
+    }), 201
 
 @app.route('/transactions', methods=['GET'], endpoint='get_transactions')
 def get_transactions():
