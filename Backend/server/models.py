@@ -22,6 +22,7 @@ class User(db.Model, SerializerMixin):
     # email = db.Column(db.String(120), unique=True)
     password_hash = db.Column('password_hash', db.String(128), nullable=False)
     # phone_number = db.Column(db.String(15))
+    password=db.Column(db.Integer,unique=True, nullable=False)
     
     # Relationships
     accounts = db.relationship("Account", back_populates="user")
