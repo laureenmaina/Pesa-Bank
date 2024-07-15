@@ -1,8 +1,11 @@
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request, session, redirect, url_for
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from datetime import date
+from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
+from flask_cors import CORS
+
 
 import sys
 import os
@@ -11,16 +14,20 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from server.models import db, User, Subscription, Transaction, TransactionType, Loan,Saving
 
 app = Flask(__name__)
+CORS(app)
 
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pesabank.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
 app.config['SECRET_KEY'] = 'freshibarida'
+login_manager= LoginManager(app)
+login_manager.login_view='login'
 
 db.init_app(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 api = Api(app)
+
 
 # Resources 
 class ClearSession(Resource):
@@ -49,6 +56,10 @@ class Signup(Resource):
 
         return new_user.to_dict(), 201
     
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+    
 class Login(Resource):
     def post(self):
         json_data = request.get_json()
@@ -64,6 +75,8 @@ class Login(Resource):
             return user.to_dict(), 200
 
         return {'message': 'Invalid username or password.'}, 401
+    def get(self):
+        return {'message': 'GET method is not supported for this endpoint.'}, 405
 
 class Logout(Resource):
     def delete(self):
@@ -82,6 +95,24 @@ class CheckSession(Resource):
 
         return user.to_dict(), 200
     
+class Transaction(Resource):
+    @login_required
+    def post(self):
+        data=request.get_json()
+        try:
+            new_transaction=Transaction(
+                user_id=current_user.id,
+                date=data['date'],
+                subscription=data['subscription'],
+                type=data['type'],
+                amount=data['amount']
+            )
+            db.session.add(new_transaction)
+            db.session.commit()
+            return {'message':'Transaction created successfully'},201
+        except Exception as e:
+            return {'error':str(e)},400
+    
 
 
 # Registering resources
@@ -90,8 +121,10 @@ api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(Login, '/login', endpoint='login')
 api.add_resource(Logout, '/logout', endpoint='logout')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
+api.add_resource(Transaction,'/transactions')
 
 #Routes
+
 @app.route('/users', methods=['GET'], endpoint='get_users')
 def get_users():
     users = User.query.all()
@@ -133,6 +166,11 @@ def delete_user(user_id):
         return jsonify({'message': 'User deleted successfully'}), 200
     else:
         return jsonify({'message': 'User not found'}), 404
+    
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
     
 
 @app.route('/subscriptions', methods=['POST'], endpoint='create_subscription')
@@ -228,17 +266,29 @@ def delete_subscription(sub_id):
         return jsonify({'message': 'Subscription not found'}), 404
     
 
+    
+
 @app.route('/transactions', methods=['POST'], endpoint='create_transaction')
+@login_required
 def create_transaction():
     data = request.get_json()
-    new_transaction = Transaction(
-        user_id=data['user_id'],
+    try:
+        new_transaction = Transaction(
+        user_id=current_user.id,
+        date=data['date'],
         amount=data['amount'],
         type=TransactionType[data['type'].upper()]
     )
-    db.session.add(new_transaction)
-    db.session.commit()
-    return jsonify({'message': 'Transaction created successfully'}), 201
+        db.session.add(new_transaction)
+        db.session.commit()
+        return jsonify({'message': 'Transaction created successfully'}), 201
+    except Exception as e:
+        return jsonify({'error':str(e)}),400
+    
+@login_manager.unauthorized_handler
+def unauthorized():
+    return redirect(url_for('login'))  # Redirect to login page if unauthorized
+
 
 @app.route('/transactions', methods=['GET'], endpoint='get_transactions')
 def get_transactions():

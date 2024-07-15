@@ -74,25 +74,29 @@ class TransactionType(Enum):
 class Transaction(db.Model, SerializerMixin):
     __tablename__ = 'transactions'
     id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.String(10), nullable=False)
+    subscription=db.Column(db.String(100),nullable=False)
     amount = db.Column(db.Float, nullable=False)
     type = db.Column(PgEnum(TransactionType), nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     user = db.relationship("User", back_populates="transactions")
 
+
+
     @validates('amount')
     def validate_amount(self, key, amount):
-        if amount < 0:
+        if int(amount) < 0:
             raise ValueError("Amount cannot be negative.")
         return amount
     
     @validates('type')
     def validate_transaction_type(self, key, value):
-        if value not in TransactionType:
-            raise ValueError("Invalid transaction type.")
+        if not isinstance(value,TransactionType):
+            raise ValueError('value must be an instance of TransactionType')
         return value
     
     def to_dict(self):
-        return {'id': self.id,'amount': self.amount,'type': self.type.value,'user_id': self.user_id,}
+        return {'id': self.id,'amount': self.amount,'type': self.type.value,'user_id': self.user_id,'date':self.date,'subscribed':self.subscription}
 
 class Saving(db.Model, SerializerMixin):
     __tablename__ = 'savings'
@@ -168,3 +172,15 @@ class Group(db.Model, SerializerMixin):
     users = db.relationship('User', secondary=users_groups, back_populates='groups')
 
     __table_args__ = (db.UniqueConstraint('name', name='uq_group_name'),)
+
+new_user = User(username="testuser", password="password123")
+
+print(new_user.to_dict())
+tr = Transaction(
+        date='2024-07-15',  # Replace with an actual date string
+        amount=1000.0,
+        subscription='Netflix',
+        type=TransactionType.WITHDRAW,  # Assuming 'withdraw' is one of the TransactionType choices
+        user_id=1  # Replace with an actual user_id
+    )
+print(tr.to_dict())
