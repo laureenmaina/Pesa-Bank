@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 
-function Transactions() {
+function Transactions({ user }) {
   const [transactions, setTransactions] = useState([]);
   const [newTransaction, setNewTransaction] = useState({
-    user_id: '',
+    user_id: user.id,
     amount: '',
     type: ''
   });
@@ -16,7 +16,9 @@ function Transactions() {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      setTransactions(data);
+      // Filter transactions to only include those of the current user
+      const userTransactions = data.filter(transaction => transaction.user_id === user.id);
+      setTransactions(userTransactions);
     } catch (error) {
       setError(error.message);
     }
@@ -49,7 +51,7 @@ function Transactions() {
         throw new Error(errorData.message || 'Failed to create transaction');
       }
       setNewTransaction({
-        user_id: '',
+        user_id: user.id,
         amount: '',
         type: ''
       });
@@ -69,6 +71,7 @@ function Transactions() {
           value={newTransaction.user_id}
           onChange={handleChange}
           placeholder="User ID"
+          readOnly
           required
         />
         <input
@@ -98,7 +101,6 @@ function Transactions() {
       <table>
         <thead>
           <tr>
-            <th>User ID</th>
             <th>Amount</th>
             <th>Type</th>
           </tr>
@@ -106,7 +108,6 @@ function Transactions() {
         <tbody>
           {transactions.map((transaction) => (
             <tr key={transaction.id}>
-              <td>{transaction.user_id}</td>
               <td>{transaction.amount}</td>
               <td>{transaction.type}</td>
             </tr>

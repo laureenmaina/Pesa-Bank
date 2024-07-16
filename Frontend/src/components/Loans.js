@@ -1,16 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
-function Loans() {
+function Loans({ user }) {
   const [loans, setLoans] = useState([]);
   const [newLoan, setNewLoan] = useState({
-    id:'',
+    id: '',
     borrowed_amount: '',
     borrow_date: '',
     interest_rate: 12.5,
     target_date: '',
     trustee: '',
     trustee_phone_number: '',
-    user_id: ''
+    user_id: user.id
   });
   const [error, setError] = useState(null);
 
@@ -21,7 +21,8 @@ function Loans() {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      setLoans(data);
+      const userLoans = data.filter(loan => loan.user_id === user.id);
+      setLoans(userLoans);
     } catch (error) {
       setError(error.message);
     }
@@ -50,14 +51,14 @@ function Loans() {
         throw new Error(errorData.message || 'Failed to create loan');
       }
       setNewLoan({
-        id:'',
+        id: '',
         borrowed_amount: '',
         borrow_date: '',
-        interest_rate: '',
+        interest_rate: 12.5,
         target_date: '',
         trustee: '',
         trustee_phone_number: '',
-        user_id: ''
+        user_id: user.id
       });
       fetchLoans(); 
     } catch (error) {
@@ -84,13 +85,13 @@ function Loans() {
         <input
           type="date"
           name="borrow_date"
-          placeholder="borrow_date"
+          placeholder="Borrow Date"
           value={newLoan.borrow_date}
           onChange={handleChange}
           required
         />
         <input
-          type="float"
+          type="number"
           name="interest_rate"
           value={newLoan.interest_rate}
           onChange={handleChange}
@@ -126,12 +127,12 @@ function Loans() {
           value={newLoan.user_id}
           onChange={handleChange}
           placeholder="User ID"
+          readOnly
           required
         />
         <button type="submit">Add Loan</button>
       </form>
       <h1>My Loans</h1>
-      {/* <button onClick={fetchLoans}>Fetch Loans</button> */}
       {error && <p>{error}</p>}
       <table>
         <thead>

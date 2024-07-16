@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from 'react';
 
-function Subscriptions() {
+function Subscriptions({ user }) {
   const [subscriptions, setSubscriptions] = useState([]);
   const [newSubscription, setNewSubscription] = useState({
     service_provider: '',
     amount: '',
     plan: '',
     start_date: '',
-    end_date: ''
+    end_date: '',
+    user_id: user.id
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -19,7 +20,8 @@ function Subscriptions() {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      setSubscriptions(data);
+      const userSubscriptions = data.filter(subscription => subscription.user_id === user.id);
+      setSubscriptions(userSubscriptions);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -58,7 +60,8 @@ function Subscriptions() {
         amount: '',
         plan: '',
         start_date: '',
-        end_date: ''
+        end_date: '',
+        user_id: user.id
       });
       fetchSubscriptions();
     } catch (error) {
