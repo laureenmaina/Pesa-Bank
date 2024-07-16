@@ -61,16 +61,6 @@ function Savings() {
 
   return (
     <div>
-      <h1>My Savings</h1>
-      <button onClick={fetchSavings}>Fetch Savings</button>
-      {error && <p>{error}</p>}
-      <ul>
-        {savings.map((saving) => (
-          <li key={saving.id}>
-            {saving.amount} - {saving.target_date}
-          </li>
-        ))}
-      </ul>
       <h2>Add a New Saving</h2>
       <form onSubmit={handleSubmit}>
         <input
@@ -96,8 +86,29 @@ function Savings() {
           placeholder="User ID"
           required
         />
-        <button type="submit">Add Saving</button>
+        <button type="submit">Add Savings</button>
+        <button type="submit">Withdraw from Savings</button>
       </form>
+      <h1>My Savings</h1>
+      {error && <p>{error}</p>}
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Amount</th>
+            <th>Target Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {savings.map((saving) => (
+            <tr key={saving.id}>
+              <td>{saving.id}</td>
+              <td>{saving.amount}</td>
+              <td>{saving.target_date}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

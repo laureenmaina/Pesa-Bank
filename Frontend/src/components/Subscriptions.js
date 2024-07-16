@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 function Subscriptions() {
   const [subscriptions, setSubscriptions] = useState([]);
   const [newSubscription, setNewSubscription] = useState({
-    user_id: '',
     service_provider: '',
     amount: '',
     plan: '',
@@ -11,6 +10,7 @@ function Subscriptions() {
     end_date: ''
   });
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   const fetchSubscriptions = async () => {
     try {
@@ -22,8 +22,14 @@ function Subscriptions() {
       setSubscriptions(data);
     } catch (error) {
       setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchSubscriptions();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,14 +54,13 @@ function Subscriptions() {
         throw new Error(errorData.message || 'Failed to create subscription');
       }
       setNewSubscription({
-        user_id: '',
         service_provider: '',
         amount: '',
         plan: '',
         start_date: '',
         end_date: ''
       });
-      fetchSubscriptions(); 
+      fetchSubscriptions();
     } catch (error) {
       setError(error.message);
     }
@@ -64,14 +69,10 @@ function Subscriptions() {
   const handleDelete = async (id) => {
     try {
       const response = await fetch(`http://localhost:5000/subscriptions/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
+        method: 'DELETE'
       });
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to delete subscription');
+        throw new Error('Failed to delete subscription');
       }
       fetchSubscriptions();
     } catch (error) {
@@ -79,33 +80,10 @@ function Subscriptions() {
     }
   };
 
-  useEffect(() => {
-    fetchSubscriptions();
-  }, []);
-
   return (
     <div>
-      <h1>My Subscriptions</h1>
-      <button onClick={fetchSubscriptions}>Fetch Subscriptions</button>
-      {error && <p>{error}</p>}
-      <ul>
-        {subscriptions.map((subscription) => (
-          <li key={subscription.id}>
-            {subscription.service_provider} - {subscription.amount} - {subscription.plan} - {subscription.start_date} - {subscription.end_date}
-            <button onClick={() => handleDelete(subscription.id)}>Delete</button>
-          </li>
-        ))}
-      </ul>
       <h2>Add a New Subscription</h2>
       <form onSubmit={handleSubmit}>
-        <input
-          type="number"
-          name="user_id"
-          value={newSubscription.user_id}
-          onChange={handleChange}
-          placeholder="User ID"
-          required
-        />
         <input
           type="text"
           name="service_provider"
@@ -133,9 +111,9 @@ function Subscriptions() {
         <input
           type="date"
           name="start_date"
-          placeholder='start_date'
           value={newSubscription.start_date}
           onChange={handleChange}
+          placeholder="Start Date"
           required
         />
         <input
@@ -143,13 +121,49 @@ function Subscriptions() {
           name="end_date"
           value={newSubscription.end_date}
           onChange={handleChange}
+          placeholder="End Date"
           required
         />
         <button type="submit">Add Subscription</button>
       </form>
+
+      <h1>My Subscriptions</h1>
+      {loading ? (
+        <p>Loading subscriptions...</p>
+      ) : error ? (
+        <p>{error}</p>
+      ) : (
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Service Provider</th>
+              <th>Amount</th>
+              <th>Plan</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {subscriptions.map((subscription) => (
+              <tr key={subscription.id}>
+                <td>{subscription.id}</td>
+                <td>{subscription.service_provider}</td>
+                <td>{subscription.amount}</td>
+                <td>{subscription.plan}</td>
+                <td>{subscription.start_date}</td>
+                <td>{subscription.end_date}</td>
+                <td>
+                  <button onClick={() => handleDelete(subscription.id)}>Delete</button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 }
 
 export default Subscriptions;
-

@@ -6,7 +6,7 @@ function Loans() {
     id:'',
     borrowed_amount: '',
     borrow_date: '',
-    interest_rate: '',
+    interest_rate: 12.5,
     target_date: '',
     trustee: '',
     trustee_phone_number: '',
@@ -16,7 +16,7 @@ function Loans() {
 
   const fetchLoans = async () => {
     try {
-      const response = await fetch('http://127.0.0.1:5000/loans');
+      const response = await fetch('http://localhost:5000/loans');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -38,7 +38,7 @@ function Loans() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://127.0.0.1:5000/loans', {
+      const response = await fetch('http://localhost:5000/loans', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -71,16 +71,6 @@ function Loans() {
 
   return (
     <div>
-      <h1>My Loans</h1>
-      <button onClick={fetchLoans}>Fetch Loans</button>
-      {error && <p>{error}</p>}
-      <ul>
-        {loans.map((loan) => (
-          <li key={loan.id}>
-            {loan.borrowed_amount} - {loan.borrow_date} - {loan.interest_rate}% - {loan.target_date}
-          </li>
-        ))}
-      </ul>
       <h2>Add a New Loan</h2>
       <form onSubmit={handleSubmit}>
         <input
@@ -100,8 +90,7 @@ function Loans() {
           required
         />
         <input
-          type="number"
-          step="0.01"
+          type="float"
           name="interest_rate"
           value={newLoan.interest_rate}
           onChange={handleChange}
@@ -141,6 +130,31 @@ function Loans() {
         />
         <button type="submit">Add Loan</button>
       </form>
+      <h1>My Loans</h1>
+      {/* <button onClick={fetchLoans}>Fetch Loans</button> */}
+      {error && <p>{error}</p>}
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Borrowed Amount</th>
+            <th>Borrow Date</th>
+            <th>Interest Rate</th>
+            <th>Target Date</th>
+          </tr>
+        </thead>
+        <tbody>
+          {loans.map((loan) => (
+            <tr key={loan.id}>
+              <td>{loan.id}</td>
+              <td>{loan.borrowed_amount}</td>
+              <td>{loan.borrow_date}</td>
+              <td>{loan.interest_rate}%</td>
+              <td>{loan.target_date}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

@@ -61,7 +61,7 @@ class Login(Resource):
             return {'message': 'Username and password are required.'}, 400
 
         user = User.query.filter_by(username=username).first()
-        if user and user.check_password(password):  # Use the check_password method
+        if user and user.check_password(password):  
             session['user_id'] = user.id
             return user.to_dict(), 200
 

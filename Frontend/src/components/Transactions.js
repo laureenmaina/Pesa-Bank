@@ -34,13 +34,6 @@ function Transactions() {
     }));
   };
 
-  // const handleChange = (e) => {
-  //   setFormData({
-  //     ...formData,
-  //     [e.target.name]: e.target.value
-  //   });
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -66,62 +59,8 @@ function Transactions() {
     }
   };
 
-  const handleDelete = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:5000/transactions/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to delete transaction');
-      }
-      fetchTransactions();
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
-  const handleUpdate = async (id) => {
-    try {
-      const response = await fetch(`http://localhost:5000/transactions/${id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newTransaction)
-      });
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update transaction');
-      }
-      setNewTransaction({
-        user_id: '',
-        amount: '',
-        type: ''
-      });
-      fetchTransactions();
-    } catch (error) {
-      setError(error.message);
-    }
-  };
-
   return (
     <div>
-      <h1>My Transactions</h1>
-      <button onClick={fetchTransactions}>Fetch Transactions</button>
-      {error && <p>{error}</p>}
-      <ul>
-        {transactions.map((transaction) => (
-          <li key={transaction.id}>
-            {transaction.user_id} - {transaction.amount} - {transaction.type}
-            <button onClick={() => handleDelete(transaction.id)}>Delete</button>
-            <button onClick={() => handleUpdate(transaction.id)}>Update</button>
-          </li>
-        ))}
-      </ul>
       <h2>Add a New Transaction</h2>
       <form onSubmit={handleSubmit}>
         <input
@@ -140,16 +79,40 @@ function Transactions() {
           placeholder="Amount"
           required
         />
-        <input
-          type="text"
-          name="type"
-          value={newTransaction.type}
-          onChange={handleChange}
-          placeholder="Type (e.g., DEPOSIT, WITHDRAWAL)"
-          required
-        />
+        <div className="input-container">
+          <select
+            name="type"
+            value={newTransaction.type}
+            onChange={handleChange}
+            required
+          >
+            <option value="" disabled>Select Transaction Type</option>
+            <option value="DEPOSIT">Deposit</option>
+            <option value="WITHDRAWAL">Withdrawal</option>
+          </select>
+        </div>
         <button type="submit">Add Transaction</button>
       </form>
+      <h1>My Transactions</h1>
+      {error && <p>{error}</p>}
+      <table>
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Amount</th>
+            <th>Type</th>
+          </tr>
+        </thead>
+        <tbody>
+          {transactions.map((transaction) => (
+            <tr key={transaction.id}>
+              <td>{transaction.user_id}</td>
+              <td>{transaction.amount}</td>
+              <td>{transaction.type}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

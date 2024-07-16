@@ -112,8 +112,8 @@ def add_subscriptions(users):
         for user in users:
             subscription = Subscription(
                 user=user,
-                start_date=fake.date_between(start_date='today', end_date='+1y'),  # Ensure start date is today or in the future
-                end_date=fake.date_between(start_date='today', end_date='+1y'),  # Set end date within the next year
+                start_date=fake.date_between(start_date='today', end_date='+1y'),  
+                end_date=fake.date_between(start_date='today', end_date='+1y'), 
                 status=fake.random_element(elements=('active', 'inactive', 'pending')),
                 service_provider=fake.random_element(elements=('Netflix', 'Prime', 'Hulu', 'Disney+')),
                 plan=fake.random_element(elements=('basic', 'premium', 'enterprise')),
