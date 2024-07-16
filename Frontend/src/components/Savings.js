@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 
-function Savings() {
+function Savings({ user }) {
   const [savings, setSavings] = useState([]);
   const [newSaving, setNewSaving] = useState({
     amount: '',
     target_date: '',
-    user_id: ''
+    user_id: user.id
   });
   const [error, setError] = useState(null);
 
@@ -16,11 +16,16 @@ function Savings() {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      setSavings(data);
+      const userSavings = data.filter(saving => saving.user_id === user.id);
+      setSavings(userSavings);
     } catch (error) {
       setError(error.message);
     }
   };
+
+  useEffect(() => {
+    fetchSavings();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -47,17 +52,13 @@ function Savings() {
       setNewSaving({
         amount: '',
         target_date: '',
-        user_id: ''
+        user_id: user.id
       });
-      fetchSavings(); // Refresh the list of savings after adding a new one
+      fetchSavings();
     } catch (error) {
       setError(error.message);
     }
   };
-
-  useEffect(() => {
-    fetchSavings();
-  }, []);
 
   return (
     <div>
@@ -84,10 +85,10 @@ function Savings() {
           value={newSaving.user_id}
           onChange={handleChange}
           placeholder="User ID"
+          readOnly
           required
         />
         <button type="submit">Add Savings</button>
-        <button type="submit">Withdraw from Savings</button>
       </form>
       <h1>My Savings</h1>
       {error && <p>{error}</p>}

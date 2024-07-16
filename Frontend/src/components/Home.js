@@ -21,6 +21,7 @@ function Home({ user }) {
         <h2 className="home-container">
           {greeting()}, {capitalizeFirstLetter(user.username)}
         </h2>
+        <p>Your user ID is: {user.id}</p> 
       </div>
     );
   } else {
