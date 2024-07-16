@@ -81,7 +81,7 @@ class Transaction(db.Model, SerializerMixin):
 
     @validates('amount')
     def validate_amount(self, key, amount):
-        if amount < 0:
+        if int(amount) < 0:
             raise ValueError("Amount cannot be negative.")
         return amount
     
@@ -126,7 +126,7 @@ class Loan(db.Model, SerializerMixin):
             raise ValueError("The borrow date cannot be in the future.")
         if key == 'target_date' and value < date.today():
             raise ValueError("The target date cannot be in the past.")
-        if (key == 'borrowed_amount' or key == 'interest_rate') and value < 0:
+        if (key == 'borrowed_amount' or key == 'interest_rate') and float(value) < 0:
             raise ValueError(f"{key} cannot be negative.")
         return value
 
@@ -156,7 +156,7 @@ class Subscription(db.Model, SerializerMixin):
     
     @validates('amount')
     def validate_amount(self, key, amount):
-        if amount < 0:
+        if float(amount) < 0:
             raise ValueError("Amount cannot be negative.")
         return amount
 

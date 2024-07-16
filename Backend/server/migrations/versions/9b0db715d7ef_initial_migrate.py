@@ -1,8 +1,8 @@
-"""made email and phone optional
+"""initial migrate
 
-Revision ID: d9bce4642c5d
+Revision ID: 9b0db715d7ef
 Revises: 
-Create Date: 2024-07-14 11:58:19.951682
+Create Date: 2024-07-16 19:13:07.434226
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd9bce4642c5d'
+revision = '9b0db715d7ef'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -28,11 +28,8 @@ def upgrade():
     op.create_table('users',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('username', sa.String(length=50), nullable=False),
-    sa.Column('email', sa.String(length=120), nullable=True),
     sa.Column('password_hash', sa.String(length=128), nullable=False),
-    sa.Column('phone_number', sa.String(length=15), nullable=True),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
     )
     op.create_table('accounts',
