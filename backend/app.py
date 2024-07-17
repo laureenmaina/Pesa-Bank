@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, session
+from flask import Flask, jsonify, request, session,render_template
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
@@ -11,7 +11,16 @@ load_dotenv()
 from models import db, User, Subscription, Transaction, TransactionType, Loan, Saving
 
 
-app = Flask(__name__)
+app = Flask(
+    __name__,
+    static_url_path='',
+    static_folder='../frontend/build',
+    template_folder='../frontend/build'
+)
+
+@app.errorhandler(404)
+def not_found(e):
+    return render_template("index.html")
 CORS(app)
 
 
@@ -24,6 +33,9 @@ db.init_app(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 api = Api(app)
+
+
+
 
 # Resources 
 class ClearSession(Resource):
