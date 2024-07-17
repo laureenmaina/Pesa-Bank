@@ -4,7 +4,7 @@ function Savings({ user }) {
   const [savings, setSavings] = useState([]);
   const [newSaving, setNewSaving] = useState({
     amount: '',
-    target_date: '',
+    target_date: new Date().toISOString().slice(0,10),
     user_id: user.id
   });
   const [error, setError] = useState(null);
@@ -78,6 +78,7 @@ function Savings({ user }) {
           value={newSaving.target_date}
           onChange={handleChange}
           required
+          readOnly
         />
         {/* <input
           type="number"
@@ -97,7 +98,7 @@ function Savings({ user }) {
           <tr>
             {/* <th>ID</th> */}
             <th>Amount</th>
-            <th>Date added/To add</th>
+            <th>Date Added</th>
           </tr>
         </thead>
         <tbody>
