@@ -4,28 +4,18 @@ from flask_migrate import Migrate
 from flask_restful import Api, Resource
 from datetime import date
 from flask_cors import CORS
+import os
+from dotenv import load_dotenv
+load_dotenv()
 
 from models import db, User, Subscription, Transaction, TransactionType, Loan, Saving
-
-from flask import Flask, send_from_directory
-
-app = Flask(__name__, static_folder='../frontend/build')
-
-@app.route('/')
-def serve():
-    return send_from_directory(app.static_folder, 'index.html')
-
-# Serve static files
-@app.route('/<path:path>')
-def static_proxy(path):
-    return send_from_directory(app.static_folder, path)
-
 
 
 app = Flask(__name__)
 CORS(app)
 
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///pesabank.db'
+
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.json.compact = False
 app.config['SECRET_KEY'] = 'freshibarida'
