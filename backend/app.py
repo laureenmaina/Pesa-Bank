@@ -5,6 +5,9 @@ from flask_restful import Api, Resource
 from datetime import date
 from flask_cors import CORS
 
+from models import db, User, Subscription, Transaction, TransactionType, Loan, Saving
+
+
 from flask import Flask, send_from_directory
 
 app = Flask(__name__, static_folder='../frontend/build')
@@ -19,7 +22,6 @@ def static_proxy(path):
     return send_from_directory(app.static_folder, path)
 
 
-from models import db, User, Subscription, Transaction, TransactionType, Loan, Saving
 
 app = Flask(__name__)
 CORS(app)
