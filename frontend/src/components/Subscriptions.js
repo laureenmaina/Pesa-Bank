@@ -7,7 +7,7 @@ function Subscriptions({ user }) {
     service_provider: '',
     amount: '',
     plan: '',
-    start_date: '',
+    start_date: new Date().toISOString().slice(0,10),
     end_date: '',
     user_id: user.id
   });
@@ -119,6 +119,7 @@ function Subscriptions({ user }) {
           onChange={handleChange}
           placeholder="Start Date"
           required
+          readOnly
         />
         <input
           type="date"

@@ -5,7 +5,7 @@ function Loans({ user }) {
   const [newLoan, setNewLoan] = useState({
     id: '',
     borrowed_amount: '',
-    borrow_date: '',
+    borrow_date: new Date().toISOString().split('T')[0],
     interest_rate: 12.5,
     target_date: '',
     trustee: '',
@@ -28,16 +28,34 @@ function Loans({ user }) {
     }
   };
 
+  const integer = (value) => {
+    return /^\d+$/.test(value)
+  }
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setNewLoan((prevLoan) => ({
       ...prevLoan,
       [name]: value
-    }));
+    }));    
   };
+
+  const phoneNumber = (phonen) => {
+    const phone = /^07\d{2}-\d{3}-\d{3}$/;
+    if (!phone.test(phonen)) {
+      setError('The phone number must be in the format 07**-***-***. Please ensure you include the dashes(-)')
+    } else {
+      setError('')
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    phoneNumber(newLoan.trustee_phone_number)
+    if (error) {
+      alert(error)
+      return;
+    }
     try {
       const response = await fetch('http://localhost:5000/loans', {
         method: 'POST',
@@ -60,7 +78,7 @@ function Loans({ user }) {
         trustee_phone_number: '',
         user_id: user.id
       });
-      fetchLoans(); 
+      fetchLoans();
     } catch (error) {
       setError(error.message);
     }
@@ -89,6 +107,7 @@ function Loans({ user }) {
           value={newLoan.borrow_date}
           onChange={handleChange}
           required
+          readOnly
         />
         <input
           type="number"
@@ -131,9 +150,10 @@ function Loans({ user }) {
           required
         /> */}
         <button className='dashbtns' type="submit">Add Loan</button>
+        {error && <p>{error}</p>}
       </form>
       <h1>My Loans</h1>
-      {error && <p>{error}</p>}
+      
       <table>
         <thead>
           <tr>
