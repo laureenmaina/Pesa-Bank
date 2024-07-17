@@ -1,0 +1,43 @@
+.footer {
+    margin-top: 90px;
+    text-align: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.contact-link {
+    color: black;
+    cursor: pointer;
+    margin: 0 5px;
+    transition: transform 0.3s ease;
+    /* border: 2px solid #003366; */
+    padding: 10px;
+    /* border-radius: 8px; */
+
+}
+
+.contact-link:hover {
+    transform: scale(1.05);
+}
+
+.contact-info-popup {
+    margin-top: 10px;
+    font-weight: bold;
+    animation: popup 0.3s ease-out;
+}
+
+
+@media (max-width: 600px) {
+    .footer {
+        padding: 15px;
+    }
+
+    .contact-link {
+        margin: 5px 0;
+        width: 100%; 
+        display: block;
+    }
+}
