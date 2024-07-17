@@ -49,7 +49,7 @@ function Savings() {
         target_date: '',
         user_id: ''
       });
-      fetchSavings(); // Refresh the list of savings after adding a new one
+      fetchSavings(); 
     } catch (error) {
       setError(error.message);
     }
