@@ -7,3 +7,5 @@ flask-restful
 flask-migrate
 flask-cors
 routes
+gunicorn
+psycopg2-binary
