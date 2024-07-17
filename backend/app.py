@@ -18,12 +18,8 @@ def serve():
 def static_proxy(path):
     return send_from_directory(app.static_folder, path)
 
-import sys
-import os
 
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-from models import db, User, Subscription, Transaction, TransactionType, Loan,Saving
+from models import db, User, Subscription, Transaction, TransactionType, Loan, Saving
 
 app = Flask(__name__)
 CORS(app)
