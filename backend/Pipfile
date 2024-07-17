@@ -13,6 +13,9 @@ flask-restful = "*"
 flask-migrate = "*"
 flask-cors = "*"
 routes = "*"
+flask = "*"
+gunicorn = "*"
+psycopg2-binary = "*"
 
 [dev-packages]
 
