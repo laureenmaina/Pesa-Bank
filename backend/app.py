@@ -16,6 +16,7 @@ app = Flask(
     static_folder='../frontend/build',
     template_folder='../frontend/build'
 )
+CORS(app)
 
 @app.errorhandler(404)
 def not_found(e):
