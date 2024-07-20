@@ -19,7 +19,7 @@ app = Flask(
 
 @app.errorhandler(404)
 def not_found(e):
-    return render_template("index.html")
+    return render_template("./index.html")
 
 # Allow CORS for all domains (adjust as needed)
 CORS(app, resources={r"/*": {"origins": "*"}})
