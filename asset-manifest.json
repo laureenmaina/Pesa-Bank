@@ -1,13 +1,18 @@
 {
   "files": {
-    "main.css": "/Pesa-Bank/static/css/main.cd734dd5.css",
+    "main.css": "/Pesa-Bank/static/css/main.62d089b2.css",
     "main.js": "/Pesa-Bank/static/js/main.8f895c3f.js",
+    "static/media/pexels-karolina-grabowska-4968385.jpg": "/Pesa-Bank/static/media/pexels-karolina-grabowska-4968385.1f141eb18998d4dc12f9.jpg",
+    "static/media/pexels-shvetsa-3943949.jpg": "/Pesa-Bank/static/media/pexels-shvetsa-3943949.bdc697daa25e7b50936f.jpg",
+    "static/media/pexels-pixabay-50987.jpg": "/Pesa-Bank/static/media/pexels-pixabay-50987.fcf83e6c639364959db3.jpg",
+    "static/media/pexels-maitree-rimthong-444156-1602726.jpg": "/Pesa-Bank/static/media/pexels-maitree-rimthong-444156-1602726.6f992e8155cc76e43231.jpg",
+    "static/media/Subscription-Services-657x432.jpg": "/Pesa-Bank/static/media/Subscription-Services-657x432.721eb3bfeaae93775f9d.jpg",
     "index.html": "/Pesa-Bank/index.html",
-    "main.cd734dd5.css.map": "/Pesa-Bank/static/css/main.cd734dd5.css.map",
+    "main.62d089b2.css.map": "/Pesa-Bank/static/css/main.62d089b2.css.map",
     "main.8f895c3f.js.map": "/Pesa-Bank/static/js/main.8f895c3f.js.map"
   },
   "entrypoints": [
-    "static/css/main.cd734dd5.css",
+    "static/css/main.62d089b2.css",
     "static/js/main.8f895c3f.js"
   ]
 }
