@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/Pesa-Bank/static/css/main.cd734dd5.css",
-    "main.js": "/Pesa-Bank/static/js/main.d696cf68.js",
+    "main.js": "/Pesa-Bank/static/js/main.8f895c3f.js",
     "index.html": "/Pesa-Bank/index.html",
     "main.cd734dd5.css.map": "/Pesa-Bank/static/css/main.cd734dd5.css.map",
-    "main.d696cf68.js.map": "/Pesa-Bank/static/js/main.d696cf68.js.map"
+    "main.8f895c3f.js.map": "/Pesa-Bank/static/js/main.8f895c3f.js.map"
   },
   "entrypoints": [
     "static/css/main.cd734dd5.css",
-    "static/js/main.d696cf68.js"
+    "static/js/main.8f895c3f.js"
   ]
 }
