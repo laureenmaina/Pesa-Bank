@@ -21,8 +21,6 @@ app = Flask(
 def not_found(e):
      return render_template("./public/index.html"), 404
 
-# Allow CORS for all domains (adjust as needed)
-CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -33,7 +31,6 @@ db.init_app(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 api = Api(app)
-
 
 
 # Resources 

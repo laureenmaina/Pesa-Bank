@@ -11,7 +11,7 @@ function SignUp({ setUser }) {
   const [error, setError] = useState(null);
 
   function handleSignUp() {
-    fetch("/signup", {
+    fetch("https://pesa-bank-8dew.onrender.com/signup", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
