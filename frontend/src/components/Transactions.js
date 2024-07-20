@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import './styles/Transactions.css';
+
 function Transactions({ user }) {
   const [transactions, setTransactions] = useState([]);
   const [newTransaction, setNewTransaction] = useState({
@@ -16,7 +17,6 @@ function Transactions({ user }) {
         throw new Error('Network response was not ok');
       }
       const data = await response.json();
-      // Filter transactions to only include those of the current user
       const userTransactions = data.filter(transaction => transaction.user_id === user.id);
       setTransactions(userTransactions);
     } catch (error) {
