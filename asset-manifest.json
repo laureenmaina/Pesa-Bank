@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "/Pesa-Bank/static/css/main.9058f5b5.css",
-    "main.js": "/Pesa-Bank/static/js/main.60844aee.js",
-    "static/media/pexels-karolina-grabowska-4968385.jpg": "/Pesa-Bank/static/media/pexels-karolina-grabowska-4968385.1f141eb18998d4dc12f9.jpg",
-    "static/media/pexels-shvetsa-3943949.jpg": "/Pesa-Bank/static/media/pexels-shvetsa-3943949.bdc697daa25e7b50936f.jpg",
-    "static/media/pexels-pixabay-50987.jpg": "/Pesa-Bank/static/media/pexels-pixabay-50987.fcf83e6c639364959db3.jpg",
-    "static/media/pexels-energepic-com-27411-2988232.jpg": "/Pesa-Bank/static/media/pexels-energepic-com-27411-2988232.029f69ee2be2d746ce2d.jpg",
-    "static/media/pexels-maitree-rimthong-444156-1602726.jpg": "/Pesa-Bank/static/media/pexels-maitree-rimthong-444156-1602726.6f992e8155cc76e43231.jpg",
-    "static/media/Subscription-Services-657x432.jpg": "/Pesa-Bank/static/media/Subscription-Services-657x432.721eb3bfeaae93775f9d.jpg",
-    "index.html": "/Pesa-Bank/index.html",
-    "main.9058f5b5.css.map": "/Pesa-Bank/static/css/main.9058f5b5.css.map",
-    "main.60844aee.js.map": "/Pesa-Bank/static/js/main.60844aee.js.map"
+    "main.css": "/static/css/main.a7036ab8.css",
+    "main.js": "/static/js/main.60844aee.js",
+    "static/media/pexels-karolina-grabowska-4968385.jpg": "/static/media/pexels-karolina-grabowska-4968385.1f141eb18998d4dc12f9.jpg",
+    "static/media/pexels-shvetsa-3943949.jpg": "/static/media/pexels-shvetsa-3943949.bdc697daa25e7b50936f.jpg",
+    "static/media/pexels-pixabay-50987.jpg": "/static/media/pexels-pixabay-50987.fcf83e6c639364959db3.jpg",
+    "static/media/pexels-energepic-com-27411-2988232.jpg": "/static/media/pexels-energepic-com-27411-2988232.029f69ee2be2d746ce2d.jpg",
+    "static/media/pexels-maitree-rimthong-444156-1602726.jpg": "/static/media/pexels-maitree-rimthong-444156-1602726.6f992e8155cc76e43231.jpg",
+    "static/media/Subscription-Services-657x432.jpg": "/static/media/Subscription-Services-657x432.721eb3bfeaae93775f9d.jpg",
+    "index.html": "/index.html",
+    "main.a7036ab8.css.map": "/static/css/main.a7036ab8.css.map",
+    "main.60844aee.js.map": "/static/js/main.60844aee.js.map"
   },
   "entrypoints": [
-    "static/css/main.9058f5b5.css",
+    "static/css/main.a7036ab8.css",
     "static/js/main.60844aee.js"
   ]
 }
