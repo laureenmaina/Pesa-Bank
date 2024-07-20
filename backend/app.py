@@ -20,7 +20,7 @@ CORS(app)
 
 @app.errorhandler(404)
 def not_found(e):
-     return render_template("index.html"), 404
+    return render_template("index.html")
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')

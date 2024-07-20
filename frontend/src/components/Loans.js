@@ -28,9 +28,7 @@ function Loans({ user }) {
     }
   };
 
-  const integer = (value) => {
-    return /^\d+$/.test(value)
-  }
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -40,14 +38,14 @@ function Loans({ user }) {
     }));    
   };
 
-  // const phoneNumber = (phonen) => {
-  //   const phone = /^07\d{2}-\d{3}-\d{3}$/;
-  //   if (!phone.test(phonen)) {
-  //     setError('The phone number must be in the format 07**-***-***. Please ensure you include the dashes(-)')
-  //   } else {
-  //     setError('')
-  //   }
-  // }
+  const phoneNumber = (phonen) => {
+    const phone = /^\d{10}$/;
+    if (!phone.test(phonen)) {
+      setError('The phone number must be exactly 10 digits long.');
+    } else {
+      setError('');
+    }
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
