@@ -40,14 +40,14 @@ function Loans({ user }) {
     }));    
   };
 
-  const phoneNumber = (phonen) => {
-    const phone = /^07\d{2}-\d{3}-\d{3}$/;
-    if (!phone.test(phonen)) {
-      setError('The phone number must be in the format 07**-***-***. Please ensure you include the dashes(-)')
-    } else {
-      setError('')
-    }
-  }
+  // const phoneNumber = (phonen) => {
+  //   const phone = /^07\d{2}-\d{3}-\d{3}$/;
+  //   if (!phone.test(phonen)) {
+  //     setError('The phone number must be in the format 07**-***-***. Please ensure you include the dashes(-)')
+  //   } else {
+  //     setError('')
+  //   }
+  // }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
