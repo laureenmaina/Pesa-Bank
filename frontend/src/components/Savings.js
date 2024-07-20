@@ -81,15 +81,7 @@ function Savings({ user }) {
           required
           readOnly
         />
-        {/* <input
-          type="number"
-          name="user_id"
-          value={newSaving.user_id}
-          onChange={handleChange}
-          placeholder="User ID"
-          readOnly
-          required
-        /> */}
+     
         <button className='dashbtns' type="submit">Add Savings</button>
       </form>
       <h1>My Savings</h1>

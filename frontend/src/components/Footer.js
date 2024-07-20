@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './styles/Footer.css'; // Ensure you have a CSS file for the styles
+import './styles/Footer.css'; 
 
 function Footer() {
     const [contactInfo, setContactInfo] = useState('');
