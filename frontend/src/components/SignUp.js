@@ -23,7 +23,7 @@ function SignUp({ setUser }) {
     })
       .then((response) => {
         if (!response.ok) {
-          if (response.status === 409) { // Change to 409 based on your backend response
+          if (response.status === 409) { 
             setError("Username already exists. Please log in.");
           } else {
             throw new Error("Network response was not ok");
@@ -43,7 +43,7 @@ function SignUp({ setUser }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    setError(null); // Reset error state
+    setError(null);
 
     // Check if passwords match
     if (password !== passwordConfirmation) {

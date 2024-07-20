@@ -16,7 +16,7 @@ function Subscriptions({ user }) {
 
   const fetchSubscriptions = async () => {
     try {
-      const response = await fetch('http://localhost:5000/subscriptions');
+      const response = await fetch('https://pesa-bank-8dew.onrender.com/subscriptions');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -45,7 +45,7 @@ function Subscriptions({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/subscriptions', {
+      const response = await fetch('https://pesa-bank-8dew.onrender.com/subscriptions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -72,7 +72,7 @@ function Subscriptions({ user }) {
 
   const handleDelete = async (id) => {
     try {
-      const response = await fetch(`http://localhost:5000/subscriptions/${id}`, {
+      const response = await fetch(`https://pesa-bank-8dew.onrender.com/subscriptions/${id}`, {
         method: 'DELETE'
       });
       if (!response.ok) {

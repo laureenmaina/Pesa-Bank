@@ -16,9 +16,9 @@ function Login({ setUser }) {
 
   function handleSubmit(e) {
     e.preventDefault();
-    setError(""); // Reset error message
+    setError(""); 
 
-    fetch("/login", {
+    fetch("https://pesa-bank-8dew.onrender.com/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -11,7 +11,7 @@ function Savings({ user }) {
 
   const fetchSavings = async () => {
     try {
-      const response = await fetch('http://localhost:5000/savings');
+      const response = await fetch('https://pesa-bank-8dew.onrender.com/savings');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -38,7 +38,7 @@ function Savings({ user }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:5000/savings', {
+      const response = await fetch('https://pesa-bank-8dew.onrender.com/savings', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

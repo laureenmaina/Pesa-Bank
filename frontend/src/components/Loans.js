@@ -16,7 +16,7 @@ function Loans({ user }) {
 
   const fetchLoans = async () => {
     try {
-      const response = await fetch('http://localhost:5000/loans');
+      const response = await fetch('https://pesa-bank-8dew.onrender.com/loans');
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
@@ -57,7 +57,7 @@ function Loans({ user }) {
       return;
     }
     try {
-      const response = await fetch('http://localhost:5000/loans', {
+      const response = await fetch('https://pesa-bank-8dew.onrender.com/loans', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'

@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, session,render_template
+from flask import Flask, jsonify, request, session, render_template
 from flask_bcrypt import Bcrypt
 from flask_migrate import Migrate
 from flask_restful import Api, Resource
@@ -10,7 +10,6 @@ load_dotenv()
 
 from models import db, User, Subscription, Transaction, TransactionType, Loan, Saving
 
-
 app = Flask(
     __name__,
     static_url_path='',
@@ -21,8 +20,9 @@ app = Flask(
 @app.errorhandler(404)
 def not_found(e):
     return render_template("index.html")
-CORS(app)
 
+# Allow CORS for all domains (adjust as needed)
+CORS(app, resources={r"/*": {"origins": "*"}})
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -33,7 +33,6 @@ db.init_app(app)
 migrate = Migrate(app, db)
 bcrypt = Bcrypt(app)
 api = Api(app)
-
 
 
 
@@ -56,7 +55,7 @@ class Signup(Resource):
             return {'message': 'Username already exists.'}, 409
 
         new_user = User(username=username)
-        new_user.password = password  # Use the password setter to hash the password
+        new_user.password = password 
         db.session.add(new_user)
         db.session.commit()
 

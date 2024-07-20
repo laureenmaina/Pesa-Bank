@@ -16,7 +16,7 @@ function App() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/check_session").then((r) => {
+    fetch("https://pesa-bank-8dew.onrender.com/check_session").then((r) => {
       if (r.ok && r.status !== 200) {
         setLoading(false);
       } else {
@@ -44,16 +44,16 @@ function App() {
               <Route path="/" exact>
                 <Home user={user} />
               </Route>
-              <Route path="/transactions">
+              <Route path="https://pesa-bank-8dew.onrender.com/transactions">
                 <Transactions user={user} />
               </Route>
-              <Route path="/loans">
+              <Route path="https://pesa-bank-8dew.onrender.com/loans">
                 <Loans user={user} />
               </Route>
-              <Route path="/subscriptions">
+              <Route path="https://pesa-bank-8dew.onrender.com/subscriptions">
                 <Subscriptions user={user} />
               </Route>
-              <Route path="/savings">
+              <Route path="https://pesa-bank-8dew.onrender.com/savings">
                 <Savings user={user} />
               </Route>
             </Switch>

@@ -7,14 +7,11 @@ function Dashboard({ user }) {
   const [subscribedServices, setSubscribedServices] = useState([]);
 
   useEffect(() => {
-    // Fetch user-specific data like balance, transactions, loan balance, and subscribed services
     fetchUserData(user.id);
   }, [user]);
 
-  // Simulated function to fetch user data
   function fetchUserData(userId) {
-    // Example fetch implementation, replace with actual backend endpoint
-    fetch(`/user/${userId}/dashboard`)
+    fetch(`https://pesa-bank-8dew.onrender.com/user/${userId}/dashboard`)
       .then((response) => response.json())
       .then((data) => {
         setBalance(data.balance);
