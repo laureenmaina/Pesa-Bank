@@ -17,9 +17,9 @@ app = Flask(
     template_folder='../frontend/build'
 )
 
-@app.errorhandler(404)
-def not_found(e):
-     return render_template("./index.html"), 404
+# @app.errorhandler(404)
+# def not_found(e):
+#      return render_template("/index.html"), 404
 
 # Allow CORS for all domains (adjust as needed)
 CORS(app, resources={r"/*": {"origins": "*"}})
