@@ -19,7 +19,7 @@ app = Flask(
 
 @app.errorhandler(404)
 def not_found(e):
-     return render_template("./public/index.html"), 404
+     return render_template("index.html"), 404
 
 
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URI')
