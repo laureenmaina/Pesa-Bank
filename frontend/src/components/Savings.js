@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import './styles/Savings.css';
 
 function Savings({ user }) {
   const [savings, setSavings] = useState([]);
