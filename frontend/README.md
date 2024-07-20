@@ -1,70 +1,153 @@
-# Getting Started with Create React App
+My Financial App
+Overview
+My Financial App is a web application that allows users to manage their financial transactions and loans. Users can sign up, log in, view their transactions and loans, and add new entries. The application has a front-end built with React and a back-end powered by Flask.
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Features
+User authentication (sign up and log in)
+Viewing and managing transactions
+Adding and managing loans
+Technologies Used
+Front-End: React
+Back-End: Flask
+Database: SQLAlchemy
+Authentication: Flask Sessions
+Getting Started
+Prerequisites
+Node.js and npm (for running the React app)
+Python and pip (for running the Flask API)
+A database such as SQLite (configured with Flask)
+Installation
+Clone the Repository
+bash
+Copy code
+git clone https://github.com/yourusername/my-financial-app.git
+cd my-financial-app
+Front-End Setup
+Navigate to the React project directory:
 
-## Available Scripts
+bash
+Copy code
+cd client
+Install dependencies:
 
-In the project directory, you can run:
+bash
+Copy code
+npm install
+Start the development server:
 
-### `npm start`
+bash
+Copy code
+npm start
+The React application will be available at http://localhost:3000.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Back-End Setup
+Navigate to the Flask project directory:
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+bash
+Copy code
+cd server
+Create a virtual environment:
 
-### `npm test`
+bash
+Copy code
+python -m venv venv
+Activate the virtual environment:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Windows:
 
-### `npm run build`
+bash
+Copy code
+venv\Scripts\activate
+MacOS/Linux:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+bash
+Copy code
+source venv/bin/activate
+Install dependencies:
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+bash
+Copy code
+pip install -r requirements.txt
+Run the Flask application:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+bash
+Copy code
+python app.py
+The Flask API will be available at http://localhost:5000.
 
-### `npm run eject`
+Endpoints
+Transactions
+GET /transactions: Fetch all transactions.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+POST /transactions: Create a new transaction.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Request Body:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+json
+Copy code
+{
+  "amount": "number",
+  "type": "string",  // e.g., "income" or "expense"
+  "user_id": "number"
+}
+Response:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+json
+Copy code
+{
+  "id": "number",
+  "user_id": "number",
+  "amount": "number",
+  "type": "string"  // e.g., "income" or "expense"
+}
+Loans
+GET /loans: Fetch all loans.
 
-## Learn More
+POST /loans: Create a new loan.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Request Body:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+json
+Copy code
+{
+  "borrowed_amount": "number",
+  "borrow_date": "string",  // Date in ISO format
+  "interest_rate": "number",
+  "target_date": "string",  // Date in ISO format
+  "trustee": "string",
+  "trustee_phone_number": "string",
+  "user_id": "number"
+}
+Response:
 
-### Code Splitting
+json
+Copy code
+{
+  "id": "number",
+  "borrowed_amount": "number",
+  "borrow_date": "string",  // Date in ISO format
+  "interest_rate": "number",
+  "target_date": "string",  // Date in ISO format
+  "trustee": "string",
+  "trustee_phone_number": "string",
+  "user_id": "number"
+}
+Contributing
+Fork the repository.
+Create a new branch (git checkout -b feature/YourFeature).
+Commit your changes (git commit -am 'Add new feature').
+Push to the branch (git push origin feature/YourFeature).
+Create a new Pull Request.
+License
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Contact
+For any questions or feedback, please reach out to your-email@example.com.
 
-### Analyzing the Bundle Size
+Feel free to adjust the URLs, contact details, and any specific instructions as needed for your actual setup.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
 
-### Making a Progressive Web App
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
 
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
