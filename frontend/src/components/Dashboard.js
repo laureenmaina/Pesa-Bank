@@ -10,6 +10,7 @@ function Dashboard({ user }) {
     fetchUserData(user.id);
   }, [user]);
 
+  
   function fetchUserData(userId) {
     fetch(`https://pesa-bank-8dew.onrender.com/user/${userId}/dashboard`)
       .then((response) => response.json())
