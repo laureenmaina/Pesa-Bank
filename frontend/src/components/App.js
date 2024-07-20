@@ -44,16 +44,16 @@ function App() {
               <Route path="/" exact>
                 <Home user={user} />
               </Route>
-              <Route path="https://pesa-bank-8dew.onrender.com/transactions">
+              <Route path="/transactions">
                 <Transactions user={user} />
               </Route>
-              <Route path="https://pesa-bank-8dew.onrender.com/loans">
+              <Route path="/loans">
                 <Loans user={user} />
               </Route>
-              <Route path="https://pesa-bank-8dew.onrender.com/subscriptions">
+              <Route path="/subscriptions">
                 <Subscriptions user={user} />
               </Route>
-              <Route path="https://pesa-bank-8dew.onrender.com/savings">
+              <Route path="/savings">
                 <Savings user={user} />
               </Route>
             </Switch>
