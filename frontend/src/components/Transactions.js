@@ -65,15 +65,7 @@ function Transactions({ user }) {
     <div>
       <h2>Add a New Transaction</h2>
       <form onSubmit={handleSubmit}>
-        {/* <input
-          type="number"
-          name="user_id"
-          value={newTransaction.user_id}
-          onChange={handleChange}
-          placeholder="User ID"
-          readOnly
-          required
-        /> */}
+ 
         <input
           type="number"
           name="amount"
@@ -91,7 +83,7 @@ function Transactions({ user }) {
           >
             <option value="" disabled>Select Transaction Type</option>
             <option value="DEPOSIT">Deposit</option>
-            <option value="WITHDRAWAL">Withdrawal</option>
+            <option value="WITHDRAW">Withdraw</option>
           </select>
         </div>
         <button type="submit" className='dashbtns'>Add Transaction</button>
