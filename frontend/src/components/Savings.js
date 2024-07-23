@@ -5,7 +5,7 @@ function Savings({ user }) {
   const [savings, setSavings] = useState([]);
   const [newSaving, setNewSaving] = useState({
     amount: '',
-    target_date: new Date().toISOString().slice(0,10),
+    target_date: new Date().toISOString().slice(0, 10),
     user_id: user.id
   });
   const [error, setError] = useState(null);
@@ -52,7 +52,7 @@ function Savings({ user }) {
       }
       setNewSaving({
         amount: '',
-        target_date: '',
+        target_date: new Date().toISOString().slice(0, 10),
         user_id: user.id
       });
       fetchSavings();
@@ -79,9 +79,7 @@ function Savings({ user }) {
           value={newSaving.target_date}
           onChange={handleChange}
           required
-          readOnly
         />
-     
         <button className='dashbtns' type="submit">Add Savings</button>
       </form>
       <h1>My Savings</h1>
@@ -89,7 +87,6 @@ function Savings({ user }) {
       <table>
         <thead>
           <tr>
-            {/* <th>ID</th> */}
             <th>Amount</th>
             <th>Date Added</th>
           </tr>
@@ -97,7 +94,6 @@ function Savings({ user }) {
         <tbody>
           {savings.map((saving) => (
             <tr key={saving.id}>
-              {/* <td>{saving.id}</td> */}
               <td>{saving.amount}</td>
               <td>{saving.target_date}</td>
             </tr>
