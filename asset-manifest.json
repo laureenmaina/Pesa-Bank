@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/Pesa-Bank/static/css/main.05b16a0e.css",
-    "main.js": "/Pesa-Bank/static/js/main.66be082f.js",
+    "main.js": "/Pesa-Bank/static/js/main.ad899b7a.js",
     "static/media/pexels-karolina-grabowska-4968385.jpg": "/Pesa-Bank/static/media/pexels-karolina-grabowska-4968385.1f141eb18998d4dc12f9.jpg",
     "static/media/pexels-shvetsa-3943949.jpg": "/Pesa-Bank/static/media/pexels-shvetsa-3943949.bdc697daa25e7b50936f.jpg",
     "static/media/pexels-pixabay-50987.jpg": "/Pesa-Bank/static/media/pexels-pixabay-50987.fcf83e6c639364959db3.jpg",
@@ -9,10 +9,10 @@
     "static/media/Subscription-Services-657x432.jpg": "/Pesa-Bank/static/media/Subscription-Services-657x432.721eb3bfeaae93775f9d.jpg",
     "index.html": "/Pesa-Bank/index.html",
     "main.05b16a0e.css.map": "/Pesa-Bank/static/css/main.05b16a0e.css.map",
-    "main.66be082f.js.map": "/Pesa-Bank/static/js/main.66be082f.js.map"
+    "main.ad899b7a.js.map": "/Pesa-Bank/static/js/main.ad899b7a.js.map"
   },
   "entrypoints": [
     "static/css/main.05b16a0e.css",
-    "static/js/main.66be082f.js"
+    "static/js/main.ad899b7a.js"
   ]
 }
