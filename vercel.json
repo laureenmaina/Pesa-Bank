@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "root": "frontend",
+  "root": "Pesa-Bank/frontend",
   "builds": [
     {
       "src": "package.json",
@@ -9,7 +9,7 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/",
       "dest": "index.html"
     }
   ],
