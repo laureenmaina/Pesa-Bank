@@ -1,7 +1,7 @@
 {
   "name": "pesa-bank",
   "version": "0.1.0",
-  "homepage": "https://pesa-bank-8dew.onrender.com/",
+  "homepage": "https://pesa-bank-git-main-laureenmainas-projects.vercel.app/",
   "private": true,
   "dependencies": {
     "react": "^17.0.2",
